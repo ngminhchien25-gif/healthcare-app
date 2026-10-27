@@ -10,7 +10,7 @@ public abstract class BaseProvider : IDisposable
     {
         this.configuration = configuration;
     }
-    protected IDbConnection Connection => connection ??= new SqlConnection(configuration.GetConnectionString("TrekBikes"));
+    protected IDbConnection Connection => connection ??= new SqlConnection(configuration.GetConnectionString("Healthcare"));
     public void Dispose()
     {
         if (connection != null)
