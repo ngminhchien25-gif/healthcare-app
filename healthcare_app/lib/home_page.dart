@@ -60,6 +60,7 @@ class _HomePageState extends State<HomePage> {
             // ===== Module B (Bảo): luyện tập =====
 
             // ===== Module C: thuốc và nhắc nhở =====
+            
           ],
         ],
       ),
@@ -94,6 +95,11 @@ class _HomePageState extends State<HomePage> {
                 // ===== Menu Admin của Module B =====
 
                 // ===== Menu Admin của Module C =====
+                ElevatedButton.icon(
+                  onPressed: _medicineCategories,
+                  icon: const Icon(Icons.category),
+                  label: const Text('Quản lý nhóm thuốc'),
+                ),
               ],
               ElevatedButton.icon(
                 onPressed: _logout,
@@ -113,7 +119,10 @@ class _HomePageState extends State<HomePage> {
       _loadData();
     }
   }
-
+  void _medicineCategories() {
+    Navigator.pop(context);
+    Navigator.pushNamed(context, '/medicine-categories');
+  }
   void _register() {
     Navigator.pushNamed(context, '/register');
   }

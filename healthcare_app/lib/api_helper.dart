@@ -11,4 +11,8 @@ class ApiHelper {
       if (token != null) 'Authorization': 'Bearer $token',
     };
   }
+  static Future<Map<String, String>> authHeaders() async {
+    String? token = await SessonHelper.token;
+    return {if (token != null) 'Authorization': 'Bearer $token'};
+  }
 }

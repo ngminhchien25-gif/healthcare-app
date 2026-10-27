@@ -7,6 +7,8 @@ import 'package:healthcare_app/home_page.dart';
 import 'package:healthcare_app/details_page.dart';
 import 'package:healthcare_app/change_password_page.dart'; 
 import 'package:healthcare_app/member_page.dart';
+import 'package:healthcare_app/medicine_category_page.dart'; 
+import 'package:healthcare_app/medicine_category_form_page.dart'; 
 void main() async {
   await dotenv.load(fileName: '.env');
   runApp(const MainApp());
@@ -26,6 +28,9 @@ class MainApp extends StatelessWidget {
         "/details": (context) => DetailPage(title: 'Details'),
         "/change-password": (context) => ChangePasswordPage(title: 'Đổi mật khẩu'),
         "/members": (context) => MemberPage(title: 'Quản lý thành viên'),
+                // ===== Module C: thuốc và nhắc nhở =====
+        "/medicine-categories": (context) => MedicineCategoryPage(title: 'Quản lý nhóm thuốc'),
+        "/medicine-category-form": (context) => MedicineCategoryFormPage(title: 'nhóm thuốc'),
       },
     );
   }
