@@ -100,6 +100,11 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.category),
                   label: const Text('Quản lý nhóm thuốc'),
                 ),
+                ElevatedButton.icon(
+                  onPressed: _medicineManage,
+                  icon: const Icon(Icons.medication),
+                  label: const Text('Quản lý thuốc'),
+                ),
               ],
               ElevatedButton.icon(
                 onPressed: _logout,
@@ -112,7 +117,10 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
+  void _medicineManage() {
+    Navigator.pop(context);
+    Navigator.pushNamed(context, '/medicine-manage');
+  }
   void _login() async {
     final result = await Navigator.pushNamed(context, '/login');
     if (result == true) {

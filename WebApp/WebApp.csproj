@@ -11,6 +11,12 @@
     <PackageReference Include="Dapper" Version="2.1.86" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.14" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.3" />
+    <Watch Remove="wwwroot\medicines\**" />
+    <Watch Remove="wwwroot\medicinecategories\**" />
+    <Content Remove="wwwroot\medicines\**" />
+    <Content Remove="wwwroot\medicinecategories\**" />
+    <None Remove="wwwroot\medicines\**" />
+    <None Remove="wwwroot\medicinecategories\**" />
   </ItemGroup>
 
 </Project>
