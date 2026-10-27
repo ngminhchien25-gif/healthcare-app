@@ -3,6 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:trekbikes_app/member.dart';
 import 'package:trekbikes_app/login_response.dart';
+import 'package:trekbikes_app/api_helper.dart';
+import 'package:trekbikes_app/paged_result.dart';
+import 'package:trekbikes_app/member_summary.dart';
 class MemberRepository{
   static Future<int> save(Member obj) async{
     Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/auth/register');
@@ -28,4 +31,53 @@ class MemberRepository{
     }
     return null;
   } 
+  static Future<int> changePassword(String oldPassword, String newPassword) async {
+    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/auth/password');
+    var response = await http.put(
+      uri,
+      headers: await ApiHelper.headers(),
+      body: jsonEncode({'oldPassword': oldPassword, 'newPassword': newPassword}),
+    );
+    if (response.statusCode == 200) {
+      return int.parse(response.body);
+    }
+    return -9;
+  }
+  static Future<PagedResult<MemberSummary>> getMembers(
+    String keyword,
+    int page,
+    int pageSize,
+  ) async {
+    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/member').replace(
+      queryParameters: {'keyword': keyword, 'page': '$page', 'pageSize': '$pageSize'},
+    );
+    var response = await http.get(uri, headers: await ApiHelper.headers());
+    if (response.statusCode == 200) {
+      return PagedResult<MemberSummary>.fromMap(
+        jsonDecode(response.body),
+        MemberSummary.fromMap,
+      );
+    }
+    throw Exception('Không tải được danh sách thành viên (${response.statusCode})');
+  }
+  static Future<int> setRole(String memberId, int role) async {
+    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/member/role');
+    var response = await http.put(
+      uri,
+      headers: await ApiHelper.headers(),
+      body: jsonEncode({'memberId': memberId, 'role': role}),
+    );
+    if (response.statusCode == 200) {
+      return int.parse(response.body);
+    }
+    return -9;
+  }
+  static Future<int> deleteMember(String memberId) async {
+    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/member/$memberId');
+    var response = await http.delete(uri, headers: await ApiHelper.headers());
+    if (response.statusCode == 200) {
+      return int.parse(response.body);
+    }
+    return -9;
+  }
 }

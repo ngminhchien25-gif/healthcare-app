@@ -5,6 +5,8 @@ import 'package:trekbikes_app/register_page.dart';
 import 'package:trekbikes_app/login_page.dart';
 import 'package:trekbikes_app/home_page.dart';
 import 'package:trekbikes_app/details_page.dart';
+import 'package:trekbikes_app/change_password_page.dart'; 
+import 'package:trekbikes_app/member_page.dart';
 void main() async {
   await dotenv.load(fileName: '.env');
   runApp(const MainApp());
@@ -22,6 +24,8 @@ class MainApp extends StatelessWidget {
         "/register": (context) => RegisterPage(title: 'Register'),
         "/logout": (context) => HomePage(title: 'Trek Bike'),
         "/details": (context) => DetailPage(title: 'Details'),
+        "/change-password": (context) => ChangePasswordPage(title: 'Đổi mật khẩu'),
+        "/members": (context) => MemberPage(title: 'Quản lý thành viên'),
       },
     );
   }

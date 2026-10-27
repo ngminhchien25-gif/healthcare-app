@@ -22,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   List<Bike> _bikes = [];
   int? _categoryId;
   String? _email;
+    String? _role; 
   @override
   void initState() {
     super.initState();
@@ -56,8 +57,10 @@ class _HomePageState extends State<HomePage> {
   }
   void _loadData() async {
     String? eml = await SessonHelper.email;
+    String? role = await SessonHelper.role; 
     setState(() {
       _email = eml;
+      _role = role; 
     });
   }
   @override
@@ -139,6 +142,17 @@ class _HomePageState extends State<HomePage> {
               label: const Text('Profile'),
             ),
             ElevatedButton.icon(
+              onPressed: _changePassword,
+              icon: const Icon(Icons.lock),
+              label: const Text('Đổi mật khẩu'),
+            ),
+            if (_role == 'Admin')
+              ElevatedButton.icon(
+                onPressed: _members,
+                icon: const Icon(Icons.people),
+                label: const Text('Quản lý thành viên'),
+              ),
+            ElevatedButton.icon(
               onPressed: _logout,
               icon: const Icon(Icons.logout),
               label: const Text('Logout'),
@@ -158,9 +172,19 @@ class _HomePageState extends State<HomePage> {
   void _details(int id){
     Navigator.pushNamed(context, '/details', arguments: id);
   }
-  void _logout() async {
-  await SessonHelper.delete();
-  _loadData();
+    void _changePassword() { 
+    Navigator.pop(context); 
+    Navigator.pushNamed(context, '/change-password');
+  }
+  void _members() {
+    Navigator.pop(context);
+    Navigator.pushNamed(context, '/members');
+  }
+  void _logout() async { 
+    await SessonHelper.delete();
+    if (!mounted) return;
+    Navigator.pop(context);
+    _loadData();
   }
   void _profile() {}
   void _register() {

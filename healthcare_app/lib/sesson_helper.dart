@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class SessonHelper{
   static final FlutterSecureStorage _storage = FlutterSecureStorage();
@@ -14,5 +15,18 @@ class SessonHelper{
   static Future<void> delete() async{
     await _storage.delete(key: 'token');
     await _storage.delete(key: 'email');
+  }
+  static Future<String?> get role async {
+    String? t = await token;
+    if (t == null) return null;
+    try {
+      List<String> parts = t.split('.');
+      String payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
+      Map<String, dynamic> map = jsonDecode(payload);
+      return (map['role'] ??
+          map['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']) as String?;
+    } catch (_) {
+      return null;
+    }
   }
 }
