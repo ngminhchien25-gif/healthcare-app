@@ -11,4 +11,9 @@ public class SiteProvider : BaseProvider
     public MemberRepository Member => member ??= new MemberRepository(Connection);
     BikeRepository? bike;
     public BikeRepository Bike => bike ??= new BikeRepository(Connection);
+        // ===== Module C: thuốc và nhắc nhở =====
+    MedicineCategoryRepository? medicineCategory;
+    public MedicineCategoryRepository MedicineCategory => medicineCategory ??= new MedicineCategoryRepository(Connection);
+    MedicineRepository? medicine;
+    public MedicineRepository Medicine => medicine ??= new MedicineRepository(Connection);
 }

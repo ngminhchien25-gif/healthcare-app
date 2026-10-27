@@ -3,7 +3,8 @@
 **/obj/
 .vs/
 *.user
-
+WebApp/wwwroot/medicines/
+WebApp/wwwroot/medicinecategories/
 # Flutter / Dart
 **/.dart_tool/
 **/build/

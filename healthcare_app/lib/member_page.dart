@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:trekbikes_app/member_repository.dart';
-import 'package:trekbikes_app/member_summary.dart';
-import 'package:trekbikes_app/paged_result.dart';
-import 'package:trekbikes_app/sesson_helper.dart';
+import 'package:healthcare_app/member_repository.dart';
+import 'package:healthcare_app/member_summary.dart';
+import 'package:healthcare_app/paged_result.dart';
+import 'package:healthcare_app/sesson_helper.dart';
 
 class MemberPage extends StatefulWidget {
   final String title;

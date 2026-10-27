@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
-import 'package:trekbikes_app/sub_category.dart';
+import 'package:healthcare_app/sub_category.dart';
 class SubCategoryRepository {
   static Future<List<SubCategory>> getSubCategories() async {
     String url = "${dotenv.env['API_URL']}/api/subcategory";

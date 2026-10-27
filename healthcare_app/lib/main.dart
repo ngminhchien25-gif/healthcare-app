@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:trekbikes_app/category_page.dart';
-import 'package:trekbikes_app/register_page.dart';
-import 'package:trekbikes_app/login_page.dart';
-import 'package:trekbikes_app/home_page.dart';
-import 'package:trekbikes_app/details_page.dart';
-import 'package:trekbikes_app/change_password_page.dart'; 
-import 'package:trekbikes_app/member_page.dart';
+import 'package:healthcare_app/category_page.dart';
+import 'package:healthcare_app/register_page.dart';
+import 'package:healthcare_app/login_page.dart';
+import 'package:healthcare_app/home_page.dart';
+import 'package:healthcare_app/details_page.dart';
+import 'package:healthcare_app/change_password_page.dart'; 
+import 'package:healthcare_app/member_page.dart';
 void main() async {
   await dotenv.load(fileName: '.env');
   runApp(const MainApp());

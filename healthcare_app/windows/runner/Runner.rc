@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "trekbikes_app" "\0"
+            VALUE "FileDescription", "healthcare_app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "trekbikes_app" "\0"
+            VALUE "InternalName", "healthcare_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "trekbikes_app.exe" "\0"
-            VALUE "ProductName", "trekbikes_app" "\0"
+            VALUE "OriginalFilename", "healthcare_app.exe" "\0"
+            VALUE "ProductName", "healthcare_app" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

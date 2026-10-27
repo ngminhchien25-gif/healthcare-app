@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
-import 'package:trekbikes_app/bike.dart';
+import 'package:healthcare_app/bike.dart';
 
 class BikeRepository {
   static Future<Bike> getBike(int id) async {

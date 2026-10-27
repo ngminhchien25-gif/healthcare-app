@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:trekbikes_app/member.dart';
-import 'package:trekbikes_app/login_response.dart';
-import 'package:trekbikes_app/api_helper.dart';
-import 'package:trekbikes_app/paged_result.dart';
-import 'package:trekbikes_app/member_summary.dart';
+import 'package:healthcare_app/member.dart';
+import 'package:healthcare_app/login_response.dart';
+import 'package:healthcare_app/api_helper.dart';
+import 'package:healthcare_app/paged_result.dart';
+import 'package:healthcare_app/member_summary.dart';
 class MemberRepository{
   static Future<int> save(Member obj) async{
     Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/auth/register');

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trekbikes_app/bike.dart';
-import 'package:trekbikes_app/bike_repository.dart';
+import 'package:healthcare_app/bike.dart';
+import 'package:healthcare_app/bike_repository.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 class DetailPage extends StatefulWidget {
   final String _title;

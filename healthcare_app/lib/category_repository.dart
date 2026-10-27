@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:trekbikes_app/category.dart';
+import 'package:healthcare_app/category.dart';
 import 'package:http/http.dart' as http;
 class CategoryRepository {
   static Future<List<Category>> getCategories() async {

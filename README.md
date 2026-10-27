@@ -1,7 +1,7 @@
 Sau khi clone về
 cd health-app
-Copy-Item trekbikes_app\.env.example trekbikes_app\.env
-cd trekbikes_app 
+Copy-Item healthcare_app\.env.example healthcare_app\.env
+cd healthcare_app 
 flutter pub get 
 cd ..
 cd WebApp 

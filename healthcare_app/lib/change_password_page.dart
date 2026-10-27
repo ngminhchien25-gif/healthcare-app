@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trekbikes_app/member_repository.dart';
+import 'package:healthcare_app/member_repository.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   final String title;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trekbikes_app/member.dart';
-import 'package:trekbikes_app/member_repository.dart';
+import 'package:healthcare_app/member.dart';
+import 'package:healthcare_app/member_repository.dart';
 class RegisterPage extends StatefulWidget {
   final String title;
   const RegisterPage({super.key, required this.title});

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:trekbikes_app/category.dart';
+import 'package:healthcare_app/category.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:trekbikes_app/category_repository.dart';
+import 'package:healthcare_app/category_repository.dart';
 class CategoryPage extends StatefulWidget {
   final String title;
   const CategoryPage({super.key, required this.title});
