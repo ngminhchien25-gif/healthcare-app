@@ -66,4 +66,25 @@ class MedicineRepository {
     }
     return -9;
   }
+    static Future<Medicine> getMedicine(int id) async {
+    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine/$id');
+    var response = await http.get(uri, headers: await ApiHelper.headers());
+    if (response.statusCode == 200) {
+      return Medicine.fromMap(jsonDecode(response.body));
+    }
+    throw Exception('Không tìm thấy thuốc $id (${response.statusCode})');
+  }
+
+  static Future<PagedResult<Medicine>> getRelated(int id, int page, int pageSize) async {
+    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine/related/$id')
+        .replace(queryParameters: {'page': '$page', 'pageSize': '$pageSize'});
+    var response = await http.get(uri, headers: await ApiHelper.headers());
+    if (response.statusCode == 200) {
+      return PagedResult<Medicine>.fromMap(
+        jsonDecode(response.body),
+        Medicine.fromMap,
+      );
+    }
+    throw Exception('Không tải được thuốc cùng nhóm (${response.statusCode})');
+  }
 }

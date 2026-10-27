@@ -11,6 +11,8 @@ import 'package:healthcare_app/medicine_category_page.dart';
 import 'package:healthcare_app/medicine_category_form_page.dart'; 
 import 'package:healthcare_app/medicine_manage_page.dart';
 import 'package:healthcare_app/medicine_form_page.dart'; 
+import 'package:healthcare_app/medicine_page.dart';
+import 'package:healthcare_app/medicine_detail_page.dart'; 
 void main() async {
   await dotenv.load(fileName: '.env');
   runApp(const MainApp());
@@ -23,10 +25,10 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        "/": (context) => HomePage(title: 'Trek Bike'),
+        "/": (context) => HomePage(title: 'Health Care'),
         "/login": (context) => LoginPage(title: 'Login'),
         "/register": (context) => RegisterPage(title: 'Register'),
-        "/logout": (context) => HomePage(title: 'Trek Bike'),
+        "/logout": (context) => HomePage(title: 'Health Care'),
         "/details": (context) => DetailPage(title: 'Details'),
         "/change-password": (context) => ChangePasswordPage(title: 'Đổi mật khẩu'),
         "/members": (context) => MemberPage(title: 'Quản lý thành viên'),
@@ -35,6 +37,8 @@ class MainApp extends StatelessWidget {
         "/medicine-category-form": (context) => MedicineCategoryFormPage(title: 'nhóm thuốc'),
         "/medicine-manage": (context) => MedicineManagePage(title: 'Quản lý thuốc'),
         "/medicine-form": (context) => MedicineFormPage(title: 'thuốc'),
+        "/medicines": (context) => MedicinePage(title: 'Tra cứu thuốc'),
+        "/medicine-detail": (context) => MedicineDetailPage(title: 'Chi tiết thuốc'),
       },
     );
   }

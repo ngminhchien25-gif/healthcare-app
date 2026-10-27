@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
             // ===== Module B (Bảo): luyện tập =====
 
             // ===== Module C: thuốc và nhắc nhở =====
-            
+            _menuCard(Icons.medication, 'Tra cứu thuốc', '/medicines'),
           ],
         ],
       ),
