@@ -3,17 +3,13 @@ public class SiteProvider : BaseProvider
 {
     public SiteProvider(IConfiguration configuration) : base(configuration){
     }
-    CategoryRepository? category;
-    public CategoryRepository Category => category ??= new CategoryRepository(Connection);
-    SubCategoryRepository? subCategory;
-    public SubCategoryRepository SubCategory => subCategory ??= new SubCategoryRepository(Connection);
     MemberRepository? member;
     public MemberRepository Member => member ??= new MemberRepository(Connection);
-    BikeRepository? bike;
-    public BikeRepository Bike => bike ??= new BikeRepository(Connection);
-        // ===== Module C: thuốc và nhắc nhở =====
+    // ===== Module C: thuốc và nhắc nhở =====
     MedicineCategoryRepository? medicineCategory;
     public MedicineCategoryRepository MedicineCategory => medicineCategory ??= new MedicineCategoryRepository(Connection);
     MedicineRepository? medicine;
     public MedicineRepository Medicine => medicine ??= new MedicineRepository(Connection);
+    PrescriptionRepository? prescription;
+    public PrescriptionRepository Prescription => prescription ??= new PrescriptionRepository(Connection);
 }
