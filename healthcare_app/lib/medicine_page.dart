@@ -5,7 +5,8 @@ import 'package:healthcare_app/medicine_category.dart';
 import 'package:healthcare_app/medicine_category_repository.dart';
 import 'package:healthcare_app/medicine_repository.dart';
 import 'package:healthcare_app/paged_result.dart';
-
+import 'package:healthcare_app/prescription_helper.dart';
+import 'package:healthcare_app/prescription_repository.dart';
 class MedicinePage extends StatefulWidget {
   final String title;
   const MedicinePage({super.key, required this.title});
@@ -21,14 +22,29 @@ class _MedicinePageState extends State<MedicinePage> {
   int? _categoryId;
   int _page = 1;
   String? _error;
-
+  int _cartCount = 0; 
   @override
   void initState() {
     super.initState();
     _loadCategories();
     _loadMedicines();
+    _loadCartCount();
+  }
+  void _loadCartCount() async { 
+    int count = await PrescriptionRepository.countCart();
+    if (!mounted) return;
+    setState(() => _cartCount = count);
   }
 
+  void _openCart() async { 
+    await Navigator.pushNamed(context, '/prescription-cart');
+    _loadCartCount();
+  }
+
+  void _addToCart(Medicine item) async { 
+    bool ok = await PrescriptionHelper.addToCart(context, item);
+    if (ok) _loadCartCount();
+  }
   void _loadCategories() async {
     try {
       var data = await MedicineCategoryRepository.getMedicineCategories();
@@ -61,7 +77,20 @@ class _MedicinePageState extends State<MedicinePage> {
     List<Medicine> items = _result?.items ?? [];
     int totalPages = _result?.totalPages ?? 1;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+            appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          IconButton(
+            tooltip: 'Đơn thuốc đang soạn',
+            onPressed: _openCart,
+            icon: Badge(
+              label: Text('$_cartCount'),
+              isLabelVisible: _cartCount > 0,
+              child: const Icon(Icons.assignment),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           SizedBox(
@@ -159,6 +188,11 @@ class _MedicinePageState extends State<MedicinePage> {
                                       style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                     Text('Đơn vị: ${item.unit}'),
+                                    TextButton.icon(
+                                      onPressed: () => _addToCart(item),
+                                      icon: const Icon(Icons.add),
+                                      label: const Text('Thêm vào đơn'),
+                                    ),
                                   ],
                                 ),
                               ),
