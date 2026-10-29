@@ -13,6 +13,7 @@ import 'package:healthcare_app/medicine_page.dart';
 import 'package:healthcare_app/medicine_detail_page.dart'; 
 import 'package:healthcare_app/prescription_cart_page.dart'; 
 import 'package:healthcare_app/prescription_detail_page.dart'; 
+import 'package:healthcare_app/prescription_page.dart'; 
 void main() async {
   await dotenv.load(fileName: '.env');
   runApp(const MainApp());
@@ -40,6 +41,7 @@ class MainApp extends StatelessWidget {
         "/medicine-detail": (context) => MedicineDetailPage(title: 'Chi tiết thuốc'),
         "/prescription-cart": (context) => PrescriptionCartPage(title: 'Đơn thuốc đang soạn'),
         "/prescription-detail": (context) => PrescriptionDetailPage(title: 'Chi tiết đơn thuốc'),
+        "/prescriptions": (context) => PrescriptionPage(title: 'Đơn thuốc của tôi'),
       },
     );
   }

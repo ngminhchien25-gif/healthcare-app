@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:healthcare_app/api_helper.dart';
 import 'package:healthcare_app/prescription_info.dart';
 import 'package:healthcare_app/prescription_line.dart';
-
+import 'package:healthcare_app/paged_result.dart';
+import 'package:healthcare_app/prescription.dart';
 class PrescriptionRepository {
   static String get _base => '${dotenv.env['API_URL']}/api/prescription';
 
@@ -104,7 +105,30 @@ class PrescriptionRepository {
     }
     return -9;
   }
-
+  static Future<PagedResult<Prescription>> getPrescriptions(
+    String keyword,
+    DateTime? fromDate,
+    DateTime? toDate,
+    int page,
+    int pageSize,
+  ) async {
+    Map<String, String> query = {
+      'keyword': keyword,
+      'page': '$page',
+      'pageSize': '$pageSize',
+    };
+    if (fromDate != null) query['fromDate'] = _apiDate(fromDate);
+    if (toDate != null) query['toDate'] = _apiDate(toDate);
+    Uri uri = Uri.parse(_base).replace(queryParameters: query);
+    var response = await http.get(uri, headers: await ApiHelper.headers());
+    if (response.statusCode == 200) {
+      return PagedResult<Prescription>.fromMap(
+        jsonDecode(response.body),
+        Prescription.fromMap,
+      );
+    }
+    throw Exception('Không tải được danh sách đơn thuốc (${response.statusCode})');
+  }
   static Future<PrescriptionInfo> getPrescription(int id) async {
     var response = await http.get(
       Uri.parse('$_base/$id'),

@@ -62,6 +62,7 @@ class _HomePageState extends State<HomePage> {
             // ===== Module C: thuốc và nhắc nhở =====
             _menuCard(Icons.medication, 'Tra cứu thuốc', '/medicines'),
             _menuCard(Icons.assignment, 'Đơn thuốc đang soạn', '/prescription-cart'),
+            _menuCard(Icons.receipt_long, 'Đơn thuốc của tôi', '/prescriptions'),
           ],
         ],
       ),
