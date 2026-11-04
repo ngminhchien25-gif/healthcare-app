@@ -16,6 +16,7 @@ import 'package:healthcare_app/prescription_detail_page.dart';
 import 'package:healthcare_app/prescription_page.dart';
 import 'package:healthcare_app/prescription_admin_page.dart';
 import 'package:healthcare_app/prescription_admin_detail_page.dart';
+import 'package:healthcare_app/prescription_checkout_page.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
@@ -58,6 +59,8 @@ class MainApp extends StatelessWidget {
             PrescriptionAdminPage(title: 'Quản lý đơn thuốc'),
         "/prescription-admin-detail": (context) =>
             PrescriptionAdminDetailPage(title: 'Duyệt đơn thuốc'),
+        "/prescription-checkout": (context) =>
+            PrescriptionCheckoutPage(title: 'Đặt đơn thuốc'),
       },
     );
   }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthcare_app/image_helper.dart';
-import 'package:healthcare_app/medicine.dart';
-import 'package:healthcare_app/medicine_repository.dart';
+import 'package:healthcare_app/medicine_browser.dart';
 import 'package:healthcare_app/prescription_repository.dart';
 import 'package:healthcare_app/sesson_helper.dart';
 
@@ -16,14 +14,11 @@ class _HomePageState extends State<HomePage> {
   String? _email;
   String? _role;
   int _cartCount = 0;
-  List<Medicine> _latest = [];
-  String? _error;
 
   @override
   void initState() {
     super.initState();
     _loadData();
-    _loadLatest();
   }
 
   void _loadData() async {
@@ -36,21 +31,6 @@ class _HomePageState extends State<HomePage> {
       _role = role;
       _cartCount = count;
     });
-  }
-
-  void _loadLatest() async {
-    try {
-      var data = await MedicineRepository.getMedicines(null, '', 1, 8);
-      if (!mounted) return;
-      setState(() {
-        _latest = data.items;
-        _error = null;
-      });
-    } catch (ex) {
-      if (!mounted) return;
-      setState(() => _error = 'Không tải được danh sách thuốc');
-      debugPrint(ex.toString());
-    }
   }
 
   Widget _menuCard(IconData icon, String title, String route) {
@@ -124,68 +104,12 @@ class _HomePageState extends State<HomePage> {
           ] else
             const Text('Đăng nhập để lưu đơn thuốc và theo dõi sức khỏe'),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Thuốc mới nhất',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pushNamed(context, '/medicines'),
-                child: const Text('Xem tất cả'),
-              ),
-            ],
+          const Divider(),
+          Text(
+            'Danh mục và thuốc',
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          if (_error != null) Text(_error!),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _latest.length,
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200,
-              mainAxisExtent: 200,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemBuilder: (context, index) {
-              Medicine item = _latest[index];
-              return Card(
-                clipBehavior: Clip.antiAlias,
-                child: InkWell(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    '/medicine-detail',
-                    arguments: item.id,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: item.imageUrl == null
-                            ? const Icon(Icons.medication, size: 48)
-                            : Image.network(
-                                ImageHelper.url('medicines', item.imageUrl!),
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stack) =>
-                                    const Icon(Icons.broken_image, size: 48),
-                              ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          item.name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
+          MedicineBrowser(onCartChanged: _loadData),
         ],
       ),
       endDrawer: Drawer(

@@ -55,7 +55,7 @@ class _PrescriptionAdminDetailPageState
               if (_error != null) Text(_error!),
               if (info != null && p != null) ...[
                 Text(
-                  'Đơn thuốc ngày ${PrescriptionHelper.date(p.prescribedDate)}',
+                  'Đơn thuốc #${p.id} - ngày ${PrescriptionHelper.date(p.prescribedDate)}',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),

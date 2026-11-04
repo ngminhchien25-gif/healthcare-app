@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:healthcare_app/image_helper.dart';
-import 'package:healthcare_app/prescription_helper.dart';
 import 'package:healthcare_app/prescription_line.dart';
 import 'package:healthcare_app/prescription_repository.dart';
 
@@ -70,7 +69,9 @@ class _PrescriptionCartPageState extends State<PrescriptionCartPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              onPressed: line.quantity > 1 ? () => _changeQuantity(line, -1) : null,
+                              onPressed: line.quantity > 1
+                                  ? () => _changeQuantity(line, -1)
+                                  : null,
                               icon: const Icon(Icons.remove),
                             ),
                             Text('${line.quantity} ${line.unit}'),
@@ -102,7 +103,7 @@ class _PrescriptionCartPageState extends State<PrescriptionCartPage> {
                 ElevatedButton.icon(
                   onPressed: _lines.isEmpty ? null : _checkout,
                   icon: const Icon(Icons.save),
-                  label: const Text('Lưu đơn thuốc'),
+                  label: const Text('Đặt đơn thuốc'),
                 ),
               ],
             ),
@@ -113,13 +114,18 @@ class _PrescriptionCartPageState extends State<PrescriptionCartPage> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _changeQuantity(PrescriptionLine line, int delta) async {
     int quantity = line.quantity + delta;
     if (quantity < 1 || quantity > 1000) return;
-    int ret = await PrescriptionRepository.updateCart(line.medicineId, quantity, line.dosageNote ?? '');
+    int ret = await PrescriptionRepository.updateCart(
+      line.medicineId,
+      quantity,
+      line.dosageNote ?? '',
+    );
     if (!mounted) return;
     if (ret > 0) {
       _loadData();
@@ -137,7 +143,9 @@ class _PrescriptionCartPageState extends State<PrescriptionCartPage> {
         content: TextField(
           controller: noteController,
           maxLength: 128,
-          decoration: const InputDecoration(labelText: 'Theo chỉ định của bác sĩ'),
+          decoration: const InputDecoration(
+            labelText: 'Theo chỉ định của bác sĩ',
+          ),
         ),
         actions: [
           TextButton(
@@ -152,7 +160,11 @@ class _PrescriptionCartPageState extends State<PrescriptionCartPage> {
       ),
     );
     if (ok != true) return;
-    int ret = await PrescriptionRepository.updateCart(line.medicineId, line.quantity, noteController.text.trim());
+    int ret = await PrescriptionRepository.updateCart(
+      line.medicineId,
+      line.quantity,
+      noteController.text.trim(),
+    );
     if (!mounted) return;
     if (ret > 0) {
       _loadData();
@@ -176,7 +188,9 @@ class _PrescriptionCartPageState extends State<PrescriptionCartPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Xóa tất cả'),
-        content: const Text('Bạn có chắc muốn xóa toàn bộ thuốc trong đơn đang soạn?'),
+        content: const Text(
+          'Bạn có chắc muốn xóa toàn bộ thuốc trong đơn đang soạn?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -200,75 +214,8 @@ class _PrescriptionCartPageState extends State<PrescriptionCartPage> {
   }
 
   void _checkout() async {
-    DateTime date = DateTime.now();
-    final doctorController = TextEditingController();
-    final noteController = TextEditingController();
-    bool? ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Lưu đơn thuốc'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Expanded(child: Text('Ngày kê đơn: ${PrescriptionHelper.date(date)}')),
-                    TextButton(
-                      onPressed: () async {
-                        DateTime? picked = await showDatePicker(
-                          context: context,
-                          initialDate: date,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime.now(),
-                        );
-                        if (picked != null) setDialogState(() => date = picked);
-                      },
-                      child: const Text('Chọn ngày'),
-                    ),
-                  ],
-                ),
-                TextField(
-                  controller: doctorController,
-                  maxLength: 64,
-                  decoration: const InputDecoration(labelText: 'Bác sĩ kê đơn (nếu có)'),
-                ),
-                TextField(
-                  controller: noteController,
-                  maxLength: 256,
-                  maxLines: 2,
-                  decoration: const InputDecoration(labelText: 'Ghi chú'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Hủy'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Lưu đơn'),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (ok != true) return;
-    int ret = await PrescriptionRepository.checkout(date, doctorController.text.trim(), noteController.text.trim());
+    await Navigator.pushNamed(context, '/prescription-checkout');
     if (!mounted) return;
-    if (ret > 0) {
-      _showMessage('Đã lưu đơn thuốc, đang chờ dược sĩ xác nhận');
-      Navigator.pushReplacementNamed(context, '/prescription-detail', arguments: ret);
-    } else if (ret == 0) {
-      _showMessage('Đơn thuốc đang soạn trống');
-      _loadData();
-    } else if (ret == -2) {
-      _showMessage('Dữ liệu không hợp lệ (ngày kê không được ở tương lai)');
-    } else {
-      _showMessage('Lưu đơn thất bại, vui lòng thử lại');
-    }
+    _loadData();
   }
 }

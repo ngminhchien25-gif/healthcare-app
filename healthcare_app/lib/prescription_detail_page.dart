@@ -49,18 +49,24 @@ class _PrescriptionDetailPageState extends State<PrescriptionDetailPage> {
               if (_error != null) Text(_error!),
               if (info != null) ...[
                 Text(
-                  'Đơn thuốc ngày ${PrescriptionHelper.date(info.prescription.prescribedDate)}',
+                  'Đơn thuốc #${info.prescription.id} - ngày ${PrescriptionHelper.date(info.prescription.prescribedDate)}',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
-                Text('Trạng thái: ${PrescriptionHelper.statusText(info.prescription.status)}'),
+                Text(
+                  'Trạng thái: ${PrescriptionHelper.statusText(info.prescription.status)}',
+                ),
                 if (info.prescription.doctorName != null)
                   Text('Bác sĩ kê đơn: ${info.prescription.doctorName}'),
-                if (info.prescription.note != null) Text('Ghi chú: ${info.prescription.note}'),
+                if (info.prescription.note != null)
+                  Text('Ghi chú: ${info.prescription.note}'),
                 if (info.prescription.reviewNote != null)
                   Text('Ý kiến dược sĩ: ${info.prescription.reviewNote}'),
                 const SizedBox(height: 16),
-                Text('Danh sách thuốc', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  'Danh sách thuốc',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 ...info.lines.map((PrescriptionLine line) {
                   return ListTile(
                     leading: line.imageUrl == null
