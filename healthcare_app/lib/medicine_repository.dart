@@ -1,9 +1,12 @@
 import 'dart:convert';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthcare_app/api_helper.dart';
 import 'package:healthcare_app/medicine.dart';
 import 'package:healthcare_app/paged_result.dart';
+import 'package:flutter/foundation.dart';
+import 'package:healthcare_app/local_database.dart';
 
 class MedicineRepository {
   static Future<PagedResult<Medicine>> getMedicines(
@@ -20,14 +23,51 @@ class MedicineRepository {
     if (categoryId != null) query['categoryId'] = categoryId.toString();
     Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine')
         .replace(queryParameters: query);
-    var response = await http.get(uri, headers: await ApiHelper.headers());
+    http.Response response;
+    try {
+      response = await http
+          .get(uri, headers: await ApiHelper.headers())
+          .timeout(const Duration(seconds: 8));
+    } catch (_) {
+      return LocalDatabase.getMedicines(categoryId, keyword, page, pageSize);
+    }
     if (response.statusCode == 200) {
-      return PagedResult<Medicine>.fromMap(
+      var result = PagedResult<Medicine>.fromMap(
         jsonDecode(response.body),
         Medicine.fromMap,
       );
+      try {
+        await LocalDatabase.saveMedicines(result.items);
+      } catch (ex) {
+        debugPrint(ex.toString());
+      }
+      return result;
     }
     throw Exception('Không tải được danh sách thuốc (${response.statusCode})');
+  }
+
+  static Future<Medicine> getMedicine(int id) async {
+    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine/$id');
+    http.Response response;
+    try {
+      response = await http
+          .get(uri, headers: await ApiHelper.headers())
+          .timeout(const Duration(seconds: 8));
+    } catch (_) {
+      Medicine? local = await LocalDatabase.getMedicine(id);
+      if (local != null) return local;
+      throw Exception('Không có mạng và chưa có dữ liệu thuốc $id trên máy');
+    }
+    if (response.statusCode == 200) {
+      Medicine item = Medicine.fromMap(jsonDecode(response.body));
+      try {
+        await LocalDatabase.saveMedicines([item]);
+      } catch (ex) {
+        debugPrint(ex.toString());
+      }
+      return item;
+    }
+    throw Exception('Không tìm thấy thuốc $id (${response.statusCode})');
   }
 
   static Future<int> add(Medicine obj, String? filePath) {
@@ -38,7 +78,11 @@ class MedicineRepository {
     return _send('PUT', obj, filePath);
   }
 
-  static Future<int> _send(String method, Medicine obj, String? filePath) async {
+  static Future<int> _send(
+    String method,
+    Medicine obj,
+    String? filePath,
+  ) async {
     Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine');
     var request = http.MultipartRequest(method, uri);
     request.headers.addAll(await ApiHelper.authHeaders());
@@ -66,16 +110,12 @@ class MedicineRepository {
     }
     return -9;
   }
-    static Future<Medicine> getMedicine(int id) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine/$id');
-    var response = await http.get(uri, headers: await ApiHelper.headers());
-    if (response.statusCode == 200) {
-      return Medicine.fromMap(jsonDecode(response.body));
-    }
-    throw Exception('Không tìm thấy thuốc $id (${response.statusCode})');
-  }
 
-  static Future<PagedResult<Medicine>> getRelated(int id, int page, int pageSize) async {
+  static Future<PagedResult<Medicine>> getRelated(
+    int id,
+    int page,
+    int pageSize,
+  ) async {
     Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine/related/$id')
         .replace(queryParameters: {'page': '$page', 'pageSize': '$pageSize'});
     var response = await http.get(uri, headers: await ApiHelper.headers());

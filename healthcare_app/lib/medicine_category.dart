@@ -17,4 +17,12 @@ class MedicineCategory {
       icon: map['icon'],
     );
   }
+  Map<String, Object?> toMap() {
+    return {
+      'medicineCategoryId': id,
+      'medicineCategoryName': name,
+      'description': description,
+      'icon': icon,
+    };
+  }
 }

@@ -29,4 +29,16 @@ class Medicine {
       createdAt: DateTime.parse(map['createdAt']),
     );
   }
+  Map<String, Object?> toMap() {
+    return {
+      'medicineId': id,
+      'medicineCategoryId': categoryId,
+      'medicineName': name,
+      'imageUrl': imageUrl,
+      'unit': unit,
+      'description': description,
+      'precaution': precaution,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
 }

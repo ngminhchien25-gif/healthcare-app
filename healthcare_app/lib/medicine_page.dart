@@ -7,6 +7,8 @@ import 'package:healthcare_app/medicine_repository.dart';
 import 'package:healthcare_app/paged_result.dart';
 import 'package:healthcare_app/prescription_helper.dart';
 import 'package:healthcare_app/prescription_repository.dart';
+import 'package:healthcare_app/sesson_helper.dart';
+
 class MedicinePage extends StatefulWidget {
   final String title;
   const MedicinePage({super.key, required this.title});
@@ -22,7 +24,7 @@ class _MedicinePageState extends State<MedicinePage> {
   int? _categoryId;
   int _page = 1;
   String? _error;
-  int _cartCount = 0; 
+  int _cartCount = 0;
   @override
   void initState() {
     super.initState();
@@ -30,21 +32,31 @@ class _MedicinePageState extends State<MedicinePage> {
     _loadMedicines();
     _loadCartCount();
   }
-  void _loadCartCount() async { 
+
+  void _loadCartCount() async {
     int count = await PrescriptionRepository.countCart();
     if (!mounted) return;
     setState(() => _cartCount = count);
   }
 
-  void _openCart() async { 
+  void _openCart() async {
+    String? token = await SessonHelper.token;
+    if (!mounted) return;
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng đăng nhập để xem đơn thuốc')),
+      );
+      return;
+    }
     await Navigator.pushNamed(context, '/prescription-cart');
     _loadCartCount();
   }
 
-  void _addToCart(Medicine item) async { 
+  void _addToCart(Medicine item) async {
     bool ok = await PrescriptionHelper.addToCart(context, item);
     if (ok) _loadCartCount();
   }
+
   void _loadCategories() async {
     try {
       var data = await MedicineCategoryRepository.getMedicineCategories();
@@ -67,7 +79,9 @@ class _MedicinePageState extends State<MedicinePage> {
         _error = null;
       });
     } catch (ex) {
-      setState(() => _error = 'Không tải được danh sách thuốc, vui lòng thử lại');
+      setState(
+        () => _error = 'Không tải được danh sách thuốc, vui lòng thử lại',
+      );
       debugPrint(ex.toString());
     }
   }
@@ -77,7 +91,7 @@ class _MedicinePageState extends State<MedicinePage> {
     List<Medicine> items = _result?.items ?? [];
     int totalPages = _result?.totalPages ?? 1;
     return Scaffold(
-            appBar: AppBar(
+      appBar: AppBar(
         title: Text(widget.title),
         actions: [
           IconButton(
@@ -97,7 +111,10 @@ class _MedicinePageState extends State<MedicinePage> {
             height: 56,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 8.0,
+              ),
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
@@ -136,7 +153,9 @@ class _MedicinePageState extends State<MedicinePage> {
                 Expanded(
                   child: TextField(
                     controller: _keywordController,
-                    decoration: const InputDecoration(labelText: 'Tìm thuốc theo tên hoặc mô tả'),
+                    decoration: const InputDecoration(
+                      labelText: 'Tìm thuốc theo tên hoặc mô tả',
+                    ),
                     onSubmitted: (_) => _search(),
                   ),
                 ),
@@ -151,12 +170,13 @@ class _MedicinePageState extends State<MedicinePage> {
                 : GridView.builder(
                     padding: const EdgeInsets.all(8.0),
                     itemCount: items.length,
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 240,
-                      mainAxisExtent: 260,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 240,
+                          mainAxisExtent: 260,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                        ),
                     itemBuilder: (context, index) {
                       Medicine item = items[index];
                       return Card(
@@ -170,10 +190,16 @@ class _MedicinePageState extends State<MedicinePage> {
                                 child: item.imageUrl == null
                                     ? const Icon(Icons.medication, size: 64)
                                     : Image.network(
-                                        ImageHelper.url('medicines', item.imageUrl!),
+                                        ImageHelper.url(
+                                          'medicines',
+                                          item.imageUrl!,
+                                        ),
                                         fit: BoxFit.cover,
                                         errorBuilder: (context, error, stack) =>
-                                            const Icon(Icons.broken_image, size: 64),
+                                            const Icon(
+                                              Icons.broken_image,
+                                              size: 64,
+                                            ),
                                       ),
                               ),
                               Padding(
@@ -185,7 +211,9 @@ class _MedicinePageState extends State<MedicinePage> {
                                       item.name,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     Text('Đơn vị: ${item.unit}'),
                                     TextButton.icon(

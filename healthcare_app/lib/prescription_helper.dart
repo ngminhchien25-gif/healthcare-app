@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthcare_app/medicine.dart';
 import 'package:healthcare_app/prescription_repository.dart';
+import 'package:healthcare_app/sesson_helper.dart';
 
 class PrescriptionHelper {
   static String statusText(int status) {
@@ -19,6 +20,20 @@ class PrescriptionHelper {
   }
 
   static Future<bool> addToCart(BuildContext context, Medicine item) async {
+    String? token = await SessonHelper.token;
+    if (token == null) {
+      if (!context.mounted) return false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Vui lòng đăng nhập để thêm thuốc vào đơn'),
+          action: SnackBarAction(
+            label: 'Đăng nhập',
+            onPressed: () => Navigator.pushNamed(context, '/login'),
+          ),
+        ),
+      );
+      return false;
+    }
     final quantityController = TextEditingController(text: '1');
     final noteController = TextEditingController();
     bool? ok = await showDialog<bool>(
@@ -32,7 +47,9 @@ class PrescriptionHelper {
               TextField(
                 controller: quantityController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Số lượng (${item.unit})'),
+                decoration: InputDecoration(
+                  labelText: 'Số lượng (${item.unit})',
+                ),
               ),
               TextField(
                 controller: noteController,
@@ -64,7 +81,11 @@ class PrescriptionHelper {
       );
       return false;
     }
-    int ret = await PrescriptionRepository.addCart(item.id, quantity, noteController.text.trim());
+    int ret = await PrescriptionRepository.addCart(
+      item.id,
+      quantity,
+      noteController.text.trim(),
+    );
     if (!context.mounted) return false;
     if (ret > 0) {
       ScaffoldMessenger.of(context).showSnackBar(

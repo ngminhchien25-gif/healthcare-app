@@ -3,6 +3,9 @@ import 'package:healthcare_app/image_helper.dart';
 import 'package:healthcare_app/medicine.dart';
 import 'package:healthcare_app/medicine_category_repository.dart';
 import 'package:healthcare_app/medicine_repository.dart';
+import 'package:healthcare_app/prescription_helper.dart';
+import 'package:healthcare_app/prescription_repository.dart';
+import 'package:healthcare_app/sesson_helper.dart';
 
 class MedicineDetailPage extends StatefulWidget {
   final String title;
@@ -19,6 +22,7 @@ class _MedicineDetailPageState extends State<MedicineDetailPage> {
   List<Medicine> _related = [];
   int _relatedPage = 1;
   int _relatedTotalPages = 1;
+  int _cartCount = 0;
   String? _error;
   bool _loaded = false;
 
@@ -29,6 +33,7 @@ class _MedicineDetailPageState extends State<MedicineDetailPage> {
     _loaded = true;
     _id = ModalRoute.of(context)!.settings.arguments as int;
     _loadData();
+    _loadCartCount();
   }
 
   void _loadData() async {
@@ -52,9 +57,15 @@ class _MedicineDetailPageState extends State<MedicineDetailPage> {
 
   void _loadRelated() async {
     try {
-      var data = await MedicineRepository.getRelated(_id!, _relatedPage, _relatedPageSize);
+      var data = await MedicineRepository.getRelated(
+        _id!,
+        _relatedPage,
+        _relatedPageSize,
+      );
       setState(() {
-        _related = _relatedPage == 1 ? data.items : [..._related, ...data.items];
+        _related = _relatedPage == 1
+            ? data.items
+            : [..._related, ...data.items];
         _relatedTotalPages = data.totalPages;
       });
     } catch (ex) {
@@ -62,11 +73,48 @@ class _MedicineDetailPageState extends State<MedicineDetailPage> {
     }
   }
 
+  void _loadCartCount() async {
+    int count = await PrescriptionRepository.countCart();
+    if (!mounted) return;
+    setState(() => _cartCount = count);
+  }
+
+  void _addToCart(Medicine item) async {
+    bool ok = await PrescriptionHelper.addToCart(context, item);
+    if (ok) _loadCartCount();
+  }
+
+  void _openCart() async {
+    String? token = await SessonHelper.token;
+    if (!mounted) return;
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng đăng nhập để xem đơn thuốc')),
+      );
+      return;
+    }
+    await Navigator.pushNamed(context, '/prescription-cart');
+    _loadCartCount();
+  }
+
   @override
   Widget build(BuildContext context) {
     Medicine? item = _medicine;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(
+        title: Text(widget.title),
+        actions: [
+          IconButton(
+            tooltip: 'Đơn thuốc đang soạn',
+            onPressed: _openCart,
+            icon: Badge(
+              label: Text('$_cartCount'),
+              isLabelVisible: _cartCount > 0,
+              child: const Icon(Icons.assignment),
+            ),
+          ),
+        ],
+      ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -88,18 +136,35 @@ class _MedicineDetailPageState extends State<MedicineDetailPage> {
                           ),
                   ),
                   const SizedBox(height: 16),
-                  Text(item.name, style: Theme.of(context).textTheme.titleLarge),
+                  Text(
+                    item.name,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                   const SizedBox(height: 8),
                   Text('Nhóm thuốc: $_categoryName'),
                   Text('Đơn vị: ${item.unit}'),
-                  if (item.description != null && item.description!.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    onPressed: () => _addToCart(item),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Thêm vào đơn thuốc'),
+                  ),
+                  if (item.description != null &&
+                      item.description!.isNotEmpty) ...[
                     const SizedBox(height: 12),
-                    Text('Mô tả chung', style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      'Mô tả chung',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                     Text(item.description!),
                   ],
-                  if (item.precaution != null && item.precaution!.isNotEmpty) ...[
+                  if (item.precaution != null &&
+                      item.precaution!.isNotEmpty) ...[
                     const SizedBox(height: 12),
-                    Text('Lưu ý chung', style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      'Lưu ý chung',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                     Text(item.precaution!),
                   ],
                   const SizedBox(height: 12),
@@ -110,17 +175,21 @@ class _MedicineDetailPageState extends State<MedicineDetailPage> {
                 ],
                 if (_related.isNotEmpty) ...[
                   const SizedBox(height: 24),
-                  Text('Thuốc cùng nhóm', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    'Thuốc cùng nhóm',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _related.length,
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 200,
-                      mainAxisExtent: 200,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          mainAxisExtent: 200,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                        ),
                     itemBuilder: (context, index) {
                       Medicine rel = _related[index];
                       return Card(
@@ -134,10 +203,16 @@ class _MedicineDetailPageState extends State<MedicineDetailPage> {
                                 child: rel.imageUrl == null
                                     ? const Icon(Icons.medication, size: 48)
                                     : Image.network(
-                                        ImageHelper.url('medicines', rel.imageUrl!),
+                                        ImageHelper.url(
+                                          'medicines',
+                                          rel.imageUrl!,
+                                        ),
                                         fit: BoxFit.cover,
                                         errorBuilder: (context, error, stack) =>
-                                            const Icon(Icons.broken_image, size: 48),
+                                            const Icon(
+                                              Icons.broken_image,
+                                              size: 48,
+                                            ),
                                       ),
                               ),
                               Padding(

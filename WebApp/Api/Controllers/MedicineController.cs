@@ -9,17 +9,17 @@ namespace WebApp.Api.Controllers;
 public class MedicineController : BaseController
 {
     const string Folder = "medicines";
-    [HttpGet]
+    [AllowAnonymous, HttpGet]
     public PagedResult<Medicine> GetMedicines(short? categoryId, string? keyword, int page = 1, int pageSize = 10)
     {
         return Provider.Medicine.GetMedicines(categoryId, keyword, page, pageSize);
     }
-    [HttpGet("{id:int}")]
+    [AllowAnonymous, HttpGet("{id:int}")]
     public Medicine? GetMedicine(int id)
     {
         return Provider.Medicine.GetMedicine(id);
     }
-    [HttpGet("related/{id:int}")]
+    [AllowAnonymous, HttpGet("related/{id:int}")]
     public PagedResult<Medicine> GetRelated(int id, int page = 1, int pageSize = 6)
     {
         Medicine? item = Provider.Medicine.GetMedicine(id);

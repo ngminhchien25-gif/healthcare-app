@@ -9,12 +9,12 @@ namespace WebApp.Api.Controllers;
 public class MedicineCategoryController : BaseController
 {
     const string Folder = "medicinecategories";
-    [HttpGet]
+    [AllowAnonymous, HttpGet]
     public IEnumerable<MedicineCategory> GetMedicineCategories()
     {
         return Provider.MedicineCategory.GetMedicineCategories();
     }
-    [HttpGet("{id}")]
+    [AllowAnonymous, HttpGet("{id}")]
     public MedicineCategory? GetMedicineCategory(short id)
     {
         return Provider.MedicineCategory.GetMedicineCategory(id);
