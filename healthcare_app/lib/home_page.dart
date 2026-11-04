@@ -53,7 +53,9 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 16),
           if (_email == null)
-            const Text('Vui lòng đăng nhập để sử dụng các chức năng theo dõi sức khỏe')
+            const Text(
+              'Vui lòng đăng nhập để sử dụng các chức năng theo dõi sức khỏe',
+            )
           else ...[
             // ===== Module A (Danh): chỉ số cơ thể =====
 
@@ -61,8 +63,16 @@ class _HomePageState extends State<HomePage> {
 
             // ===== Module C: thuốc và nhắc nhở =====
             _menuCard(Icons.medication, 'Tra cứu thuốc', '/medicines'),
-            _menuCard(Icons.assignment, 'Đơn thuốc đang soạn', '/prescription-cart'),
-            _menuCard(Icons.receipt_long, 'Đơn thuốc của tôi', '/prescriptions'),
+            _menuCard(
+              Icons.assignment,
+              'Đơn thuốc đang soạn',
+              '/prescription-cart',
+            ),
+            _menuCard(
+              Icons.receipt_long,
+              'Đơn thuốc của tôi',
+              '/prescriptions',
+            ),
           ],
         ],
       ),
@@ -98,6 +108,11 @@ class _HomePageState extends State<HomePage> {
 
                 // ===== Menu Admin của Module C =====
                 ElevatedButton.icon(
+                  onPressed: _prescriptionAdmin,
+                  icon: const Icon(Icons.fact_check),
+                  label: const Text('Quản lý đơn thuốc'),
+                ),
+                ElevatedButton.icon(
                   onPressed: _medicineCategories,
                   icon: const Icon(Icons.category),
                   label: const Text('Quản lý nhóm thuốc'),
@@ -119,20 +134,29 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  void _prescriptionAdmin() {
+    Navigator.pop(context);
+    Navigator.pushNamed(context, '/prescription-admin');
+  }
+
   void _medicineManage() {
     Navigator.pop(context);
     Navigator.pushNamed(context, '/medicine-manage');
   }
+
   void _login() async {
     final result = await Navigator.pushNamed(context, '/login');
     if (result == true) {
       _loadData();
     }
   }
+
   void _medicineCategories() {
     Navigator.pop(context);
     Navigator.pushNamed(context, '/medicine-categories');
   }
+
   void _register() {
     Navigator.pushNamed(context, '/register');
   }
