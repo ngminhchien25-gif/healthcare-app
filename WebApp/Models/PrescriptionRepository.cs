@@ -73,4 +73,31 @@ public class PrescriptionRepository : BaseRepository
                        WHERE d.PrescriptionId = @id ORDER BY m.MedicineName";
         return connection.Query<PrescriptionLine>(sql, new { id });
     }
+        // ===== Admin (dược sĩ) =====
+    const string AdminColumns = @"p.PrescriptionId, p.MemberId, p.PrescribedDate, p.DoctorName, p.Note, p.Status, p.ReviewNote, p.CreatedAt,
+        ISNULL(m.Surname + N' ', N'') + m.GivenName AS MemberName, m.Email AS MemberEmail";
+    const string AdminFrom = "Prescription p JOIN Member m ON p.MemberId = m.MemberId";
+    public PagedResult<PrescriptionSummary> GetAllPrescriptions(string? keyword, short? status, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
+    {
+        List<string> conditions = new List<string>();
+        if (!string.IsNullOrWhiteSpace(keyword)) conditions.Add("(m.Email LIKE @Pattern OR m.GivenName LIKE @Pattern OR m.Surname LIKE @Pattern OR p.DoctorName LIKE @Pattern OR p.Note LIKE @Pattern)");
+        if (status != null) conditions.Add("p.Status = @Status");
+        if (fromDate != null) conditions.Add("p.PrescribedDate >= @FromDate");
+        if (toDate != null) conditions.Add("p.PrescribedDate <= @ToDate");
+        string fromWhere = AdminFrom;
+        if (conditions.Count > 0) fromWhere += " WHERE " + string.Join(" AND ", conditions);
+        return QueryPaged<PrescriptionSummary>(AdminColumns, fromWhere, "p.CreatedAt DESC, p.PrescriptionId DESC",
+            new { Pattern = "%" + keyword?.Trim() + "%", Status = status, FromDate = fromDate?.Date, ToDate = toDate?.Date },
+            page, pageSize);
+    }
+    public PrescriptionSummary? GetPrescriptionForAdmin(int id)
+    {
+        string sql = $"SELECT {AdminColumns} FROM {AdminFrom} WHERE p.PrescriptionId = @id";
+        return connection.QuerySingleOrDefault<PrescriptionSummary>(sql, new { id });
+    }
+    public int Review(int id, short status, string? reviewNote)
+    {
+        return connection.Execute("UPDATE Prescription SET Status = @status, ReviewNote = @reviewNote WHERE PrescriptionId = @id",
+            new { id, status, reviewNote });
+    }
 }
