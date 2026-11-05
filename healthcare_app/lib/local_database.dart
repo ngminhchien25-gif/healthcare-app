@@ -8,10 +8,20 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:healthcare_app/medicine.dart';
 import 'package:healthcare_app/medicine_category.dart';
 import 'package:healthcare_app/paged_result.dart';
+import 'package:healthcare_app/reminder.dart';
 
 class LocalDatabase {
   static Database? _db;
-
+  static const String _createReminder =
+      'CREATE TABLE Reminder ('
+      'reminderId INTEGER PRIMARY KEY, '
+      'title TEXT NOT NULL, '
+      'reminderType INTEGER NOT NULL, '
+      'remindAt TEXT NOT NULL, '
+      'note TEXT, '
+      'isDone INTEGER NOT NULL, '
+      'medicineId INTEGER, '
+      'prescriptionId INTEGER)';
   static Future<Database> _open() async {
     if (_db != null) return _db!;
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -23,7 +33,7 @@ class LocalDatabase {
     debugPrint('SQLite: $path');
     _db = await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute(
           'CREATE TABLE MedicineCategory ('
@@ -43,6 +53,12 @@ class LocalDatabase {
           'precaution TEXT, '
           'createdAt TEXT NOT NULL)',
         );
+        await db.execute(_createReminder);
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute(_createReminder);
+        }
       },
     );
     return _db!;
@@ -134,5 +150,35 @@ class LocalDatabase {
       pageSize: pageSize,
       totalPages: (total / pageSize).ceil(),
     );
+  }
+
+  // ===== Nhắc nhở (chỉ lưu các nhắc sắp tới của người đang đăng nhập) =====
+  static Future<void> saveReminders(List<Reminder> list) async {
+    Database db = await _open();
+    await db.transaction((txn) async {
+      await txn.delete('Reminder');
+      for (var r in list) {
+        await txn.insert(
+          'Reminder',
+          r.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    });
+  }
+
+  static Future<List<Reminder>> getReminders() async {
+    Database db = await _open();
+    var rows = await db.query(
+      'Reminder',
+      where: 'isDone = 0',
+      orderBy: 'remindAt ASC',
+    );
+    return rows.map((r) => Reminder.fromMap(r)).toList();
+  }
+
+  static Future<void> clearReminders() async {
+    Database db = await _open();
+    await db.delete('Reminder');
   }
 }

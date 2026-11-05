@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:healthcare_app/medicine_browser.dart';
 import 'package:healthcare_app/prescription_repository.dart';
 import 'package:healthcare_app/sesson_helper.dart';
+import 'package:healthcare_app/local_database.dart';
+import 'package:healthcare_app/reminder.dart';
+import 'package:healthcare_app/reminder_helper.dart';
+import 'package:healthcare_app/reminder_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required String title}) : _title = title;
@@ -14,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   String? _email;
   String? _role;
   int _cartCount = 0;
-
+  List<Reminder> _upcoming = [];
   @override
   void initState() {
     super.initState();
@@ -31,6 +35,26 @@ class _HomePageState extends State<HomePage> {
       _role = role;
       _cartCount = count;
     });
+    _loadUpcoming();
+  }
+
+  void _loadUpcoming() async {
+    if (_email == null) {
+      setState(() => _upcoming = []);
+      return;
+    }
+    try {
+      var data = await ReminderRepository.getUpcoming();
+      if (!mounted) return;
+      setState(() => _upcoming = data);
+    } catch (ex) {
+      debugPrint(ex.toString());
+    }
+  }
+
+  void _doneUpcoming(Reminder item) async {
+    await ReminderRepository.setDone(item.id, true);
+    _loadUpcoming();
   }
 
   Widget _menuCard(IconData icon, String title, String route) {
@@ -91,6 +115,44 @@ class _HomePageState extends State<HomePage> {
             // ===== Module B (Bảo): luyện tập =====
 
             // ===== Module C: thuốc và nhắc nhở =====
+            Text(
+              'Nhắc sắp tới',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            if (_upcoming.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Text('Chưa có nhắc nhở nào sắp tới'),
+              )
+            else
+              ..._upcoming
+                  .take(3)
+                  .map(
+                    (Reminder r) => ListTile(
+                      leading: Icon(ReminderHelper.typeIcon(r.type)),
+                      title: Text(r.title),
+                      subtitle: Text(
+                        '${ReminderHelper.dateTime(r.remindAt)}${ReminderHelper.isOverdue(r) ? ' · Quá hạn' : ''}',
+                        style: ReminderHelper.isOverdue(r)
+                            ? const TextStyle(color: Colors.red)
+                            : null,
+                      ),
+                      trailing: IconButton(
+                        tooltip: 'Đánh dấu đã xong',
+                        onPressed: () => _doneUpcoming(r),
+                        icon: const Icon(Icons.check_circle_outline),
+                      ),
+                      onTap: () async {
+                        await Navigator.pushNamed(context, '/reminders');
+                        _loadUpcoming();
+                      },
+                    ),
+                  ),
+            _menuCard(
+              Icons.notifications_active,
+              'Nhắc nhở của tôi',
+              '/reminders',
+            ),
             _menuCard(
               Icons.assignment,
               'Đơn thuốc đang soạn',
@@ -196,6 +258,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _logout() async {
+    try {
+      await LocalDatabase.clearReminders();
+    } catch (ex) {
+      debugPrint(ex.toString());
+    }
     await SessonHelper.delete();
     if (!mounted) return;
     Navigator.pop(context);
