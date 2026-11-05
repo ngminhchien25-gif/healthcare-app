@@ -12,4 +12,6 @@ public class SiteProvider : BaseProvider
     public MedicineRepository Medicine => medicine ??= new MedicineRepository(Connection);
     PrescriptionRepository? prescription;
     public PrescriptionRepository Prescription => prescription ??= new PrescriptionRepository(Connection);
+    ReminderRepository? reminder;
+    public ReminderRepository Reminder => reminder ??= new ReminderRepository(Connection);
 }
