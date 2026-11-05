@@ -136,4 +136,28 @@ class ReminderRepository {
     }
     return -9;
   }
+
+  static Future<int> createFromPrescription(
+    int prescriptionId,
+    DateTime startDate,
+    int days,
+    List<String> times,
+  ) async {
+    String two(int n) => n.toString().padLeft(2, '0');
+    var response = await http.post(
+      Uri.parse('$_base/from-prescription'),
+      headers: await ApiHelper.headers(),
+      body: jsonEncode({
+        'prescriptionId': prescriptionId,
+        'startDate':
+            '${startDate.year}-${two(startDate.month)}-${two(startDate.day)}',
+        'days': days,
+        'times': times,
+      }),
+    );
+    if (response.statusCode == 200) {
+      return int.parse(response.body);
+    }
+    return -9;
+  }
 }

@@ -93,6 +93,26 @@ class _PrescriptionDetailPageState extends State<PrescriptionDetailPage> {
                   'Thông tin chỉ mang tính tham khảo, không thay thế tư vấn của bác sĩ hoặc dược sĩ.',
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),
+                if (info.prescription.status == 1)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: ElevatedButton.icon(
+                      onPressed: () => Navigator.pushNamed(
+                        context,
+                        '/reminder-from-prescription',
+                        arguments: info.prescription.id,
+                      ),
+                      icon: const Icon(Icons.alarm_add),
+                      label: const Text('Tạo nhắc uống thuốc'),
+                    ),
+                  )
+                else if (info.prescription.status == 0)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 12.0),
+                    child: Text(
+                      'Sau khi dược sĩ xác nhận, bạn có thể tạo nhắc uống thuốc cho đơn này.',
+                    ),
+                  ),
               ],
             ],
           ),

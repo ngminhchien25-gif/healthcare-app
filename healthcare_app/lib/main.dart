@@ -19,6 +19,7 @@ import 'package:healthcare_app/prescription_admin_detail_page.dart';
 import 'package:healthcare_app/prescription_checkout_page.dart';
 import 'package:healthcare_app/reminder_page.dart';
 import 'package:healthcare_app/reminder_form_page.dart';
+import 'package:healthcare_app/reminder_from_prescription_page.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
@@ -65,6 +66,8 @@ class MainApp extends StatelessWidget {
             PrescriptionCheckoutPage(title: 'Đặt đơn thuốc'),
         "/reminders": (context) => ReminderPage(title: 'Nhắc nhở của tôi'),
         "/reminder-form": (context) => ReminderFormPage(title: 'nhắc nhở'),
+        "/reminder-from-prescription": (context) =>
+            ReminderFromPrescriptionPage(title: 'Tạo nhắc uống thuốc'),
       },
     );
   }
