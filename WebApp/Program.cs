@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using WebApp.Api.Models;
+using WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(p =>
@@ -21,6 +22,7 @@ builder.Services.AddAuthentication(p =>
     };
 });
 builder.Services.AddScoped<SiteProvider>();
+builder.Services.AddScoped<EmailService>();
 builder.Services.AddMvc();
 var app = builder.Build();
 app.UseStaticFiles();

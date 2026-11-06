@@ -14,4 +14,7 @@ public class SiteProvider : BaseProvider
     public PrescriptionRepository Prescription => prescription ??= new PrescriptionRepository(Connection);
     ReminderRepository? reminder;
     public ReminderRepository Reminder => reminder ??= new ReminderRepository(Connection);
+    // ===== Xác thực email, quên mật khẩu =====
+    EmailCodeRepository? emailCode;
+    public EmailCodeRepository EmailCode => emailCode ??= new EmailCodeRepository(Connection);
 }

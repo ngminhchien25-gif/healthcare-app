@@ -29,6 +29,18 @@ public class MemberRepository : BaseRepository
         {
             if(BCrypt.Net.BCrypt.Verify(obj.Password, member.Password))
             {
+                bool confirmed = connection.ExecuteScalar<bool>(
+                    "SELECT EmailConfirmed FROM Member WHERE MemberId = @memberId",
+                    new { memberId = member.MemberId });
+                if (!confirmed)
+                {
+                    return new LoginResuilt
+                    {
+                        Success = false,
+                        EmailNotConfirmed = true,
+                        Message = "Email chưa được xác thực"
+                    };
+                }
                 return new LoginResuilt
                 {
                     Success = true,

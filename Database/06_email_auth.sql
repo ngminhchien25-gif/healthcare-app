@@ -1,0 +1,20 @@
+USE Healthcare;
+GO
+IF COL_LENGTH('Member', 'EmailConfirmed') IS NULL
+BEGIN
+    ALTER TABLE Member ADD EmailConfirmed BIT NOT NULL CONSTRAINT DF_Member_EmailConfirmed DEFAULT 0;
+    EXEC('UPDATE Member SET EmailConfirmed = 1');
+END
+GO
+IF OBJECT_ID('EmailCode') IS NULL
+CREATE TABLE EmailCode(
+    EmailCodeId INT NOT NULL PRIMARY KEY IDENTITY(1, 1),
+    MemberId NVARCHAR(32) NOT NULL REFERENCES Member(MemberId),
+    Purpose SMALLINT NOT NULL,           
+    CodeHash NVARCHAR(128) NOT NULL,
+    ExpiresAt DATETIME2 NOT NULL,
+    Attempts SMALLINT NOT NULL DEFAULT 0,
+    UsedAt DATETIME2 NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+GO
