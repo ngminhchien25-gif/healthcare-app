@@ -79,7 +79,7 @@ Nguồn: https://ceb.net.vn/flutter/requirement.html. Điểm ghi theo bảng y�
 | Yêu cầu | Tình trạng | Ghi chú |
 |---|---|---|
 | Flutter (Dart) | Đã làm | |
-| SQLite trên điện thoại | Đã làm | Lưu bộ nhớ đệm nhóm thuốc và thuốc, xem được khi mất mmạng. Bộ nhớ đệm cho nhắc nhở thuộc bước 5b |
+| SQLite trên điện thoại | Đã làm | Lưu bộ nhớ đệm nhóm thuốc, thuốc và các nhắc sắp tới, xem được khi mất mạng. Nhắc nhở lưu trên máy bị xóa khi đăng xuất |
 | REST API C# .NET 10 và SQL Server | Đã làm | |
 
 ### Nhóm xác thực người dùng
@@ -167,10 +167,10 @@ Bảng yêu cầu ghi rõ chức năng ngoài bảng phải giải trình để 
 | Đơn thuốc cá nhân: ngày kê, bác sĩ kê đơn, ghi chú, liều dùng do người dùng nhập theo chỉ định của bác sĩ | Đã làm |
 | Dược sĩ xác nhận hoặc từ chối đơn kèm ý kiến, người dùng xem trạng thái và ý kiến | Đã làm |
 | Xem danh mục thuốc khi mất mạng nhờ SQLite | Đã làm |
-| Nhắc nhở uống thuốc và lịch khám: API thêm, sửa, xóa, đánh dấu đã xong, nhắc sắp tới | Đã làm (API) |
-| Tạo lịch nhắc uống thuốc từ đơn đã xác nhận (theo số ngày và các giờ trong ngày): API | Đã làm (API) |
-| Giao diện nhắc nhở, mục "Nhắc sắp tới" trên trang chủ, bộ nhớ đệm SQLite cho nhắc nhở | Chưa làm |
-| Giao diện tạo nhắc từ đơn đã xác nhận | Chưa làm |
+| Nhắc nhở uống thuốc và lịch khám: thêm, sửa, xóa, đánh dấu đã xong, lọc theo loại và trạng thái, tìm kiếm, phân trang | Đã làm |
+| Mục "Nhắc sắp tới" trên trang chủ, nhắc quá hạn hiển thị màu đỏ | Đã làm |
+| Tạo lịch nhắc uống thuốc từ đơn đã xác nhận, người dùng chọn ngày bắt đầu, số ngày và các giờ trong ngày | Đã làm |
+| Xem các nhắc sắp tới khi mất mạng nhờ SQLite | Đã làm |
 
 ### Module A: chỉ số cơ thể (Danh)
 
@@ -206,10 +206,8 @@ Các hàm trả mã kết quả dạng số theo quy ước của code mẫu: `1
 
 ## Việc còn lại
 
-- Giao diện nhắc nhở, mục nhắc sắp tới trên trang chủ, giao diện tạo nhắc từ đơn đã xác nhận.
 - Gộp module A và B vào `main`, kiểm tra ba khối module trong `home_page.dart`, `main.dart`, `SiteProvider.cs`.
 - Điểm cộng: quên mật khẩu, xác thực email, đăng nhập mạng xã hội, thanh toán VNPay và VietQR.
-- Xóa phần code xe đạp của bản mẫu còn trong `WebApp` (`BikeController`, `CategoryController`, `SubCategoryController`, `CartController` và các repository liên quan).
 - Việt hóa trang đăng nhập và đăng ký.
 - Kiểm thử lại các mục đánh dấu "cần kiểm thử lại" trên bản clone mới của `main`.
 - Báo cáo và sơ đồ khi giảng viên yêu cầu.
@@ -217,6 +215,8 @@ Các hàm trả mã kết quả dạng số theo quy ước của code mẫu: `1
 ## Hạn chế đã biết
 
 - Vai trò `Customer` chưa được dùng.
+- Ô nhập của Flutter trên Windows không nhận được chữ có dấu từ Unikey. Dùng bàn phím Vietnamese Telex có sẵn của Windows, hoặc gõ ở nơi khác rồi dán vào.
+- Tạo nhắc từ cùng một đơn thuốc hai lần sẽ cho hai bộ nhắc, hệ thống không chặn trùng.
 - Chưa có thông báo hệ thống; nhắc nhở hiển thị trong ứng dụng.
 - Bản build release trên Windows cần đặt `sqlite3.dll` cạnh file `.exe`.
 - Thông tin thuốc trong ứng dụng chỉ mang tính tham khảo, không thay thế tư vấn của bác sĩ hoặc dược sĩ.
