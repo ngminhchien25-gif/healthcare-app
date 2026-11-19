@@ -73,7 +73,8 @@ class MainApp extends StatelessWidget {
         "/reminder-form": (context) => ReminderFormPage(title: 'nhắc nhở'),
         "/reminder-from-prescription": (context) =>
             ReminderFromPrescriptionPage(title: 'Tạo nhắc uống thuốc'),
-        "/exercises": (context) => const ExercisePage(title: 'Danh mục bài tập'),
+        "/exercises": (context) =>
+            const ExercisePage(title: 'Danh mục bài tập'),
         "/workouts": (context) => const WorkoutPage(),
         "/workout-form": (context) => WorkoutFormPage(
           item: ModalRoute.of(context)?.settings.arguments as WorkoutLog?,

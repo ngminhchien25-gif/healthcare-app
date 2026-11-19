@@ -73,13 +73,19 @@ class WorkoutExerciseStat {
   final int minutes;
   final double calories;
 
-  const WorkoutExerciseStat(this.name, this.sessions, this.minutes, this.calories);
-  factory WorkoutExerciseStat.fromMap(Map<String, dynamic> map) => WorkoutExerciseStat(
-    map['exerciseName'],
-    map['sessionCount'],
-    map['totalMinutes'],
-    (map['totalCalories'] as num).toDouble(),
+  const WorkoutExerciseStat(
+    this.name,
+    this.sessions,
+    this.minutes,
+    this.calories,
   );
+  factory WorkoutExerciseStat.fromMap(Map<String, dynamic> map) =>
+      WorkoutExerciseStat(
+        map['exerciseName'],
+        map['sessionCount'],
+        map['totalMinutes'],
+        (map['totalCalories'] as num).toDouble(),
+      );
 }
 
 class WorkoutWeeklyStats {
@@ -101,13 +107,18 @@ class WorkoutWeeklyStats {
     required this.exercises,
   });
 
-  factory WorkoutWeeklyStats.fromMap(Map<String, dynamic> map) => WorkoutWeeklyStats(
-    weekStart: DateTime.parse(map['weekStart']),
-    weekEnd: DateTime.parse(map['weekEnd']),
-    sessions: map['totalSessions'],
-    minutes: map['totalMinutes'],
-    calories: (map['totalCalories'] as num).toDouble(),
-    days: (map['days'] as List).map((v) => WorkoutDayStat.fromMap(v)).toList(),
-    exercises: (map['exercises'] as List).map((v) => WorkoutExerciseStat.fromMap(v)).toList(),
-  );
+  factory WorkoutWeeklyStats.fromMap(Map<String, dynamic> map) =>
+      WorkoutWeeklyStats(
+        weekStart: DateTime.parse(map['weekStart']),
+        weekEnd: DateTime.parse(map['weekEnd']),
+        sessions: map['totalSessions'],
+        minutes: map['totalMinutes'],
+        calories: (map['totalCalories'] as num).toDouble(),
+        days: (map['days'] as List)
+            .map((v) => WorkoutDayStat.fromMap(v))
+            .toList(),
+        exercises: (map['exercises'] as List)
+            .map((v) => WorkoutExerciseStat.fromMap(v))
+            .toList(),
+      );
 }

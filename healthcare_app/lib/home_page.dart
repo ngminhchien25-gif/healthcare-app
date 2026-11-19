@@ -115,7 +115,11 @@ class _HomePageState extends State<HomePage> {
             // ===== Module B (Bảo): luyện tập =====
             _menuCard(Icons.fitness_center, 'Bài tập', '/exercises'),
             _menuCard(Icons.directions_run, 'Nhật ký luyện tập', '/workouts'),
-            _menuCard(Icons.bar_chart, 'Thống kê luyện tập tuần', '/workout-weekly'),
+            _menuCard(
+              Icons.bar_chart,
+              'Thống kê luyện tập tuần',
+              '/workout-weekly',
+            ),
 
             // ===== Module C: thuốc và nhắc nhở =====
             Text(
