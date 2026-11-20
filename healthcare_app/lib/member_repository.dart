@@ -1,6 +1,6 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:healthcare_app/member.dart';
 import 'package:healthcare_app/login_response.dart';
 import 'package:healthcare_app/api_helper.dart';
@@ -9,7 +9,7 @@ import 'package:healthcare_app/member_summary.dart';
 
 class MemberRepository {
   static Future<int> save(Member obj) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/auth/register');
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/auth/register');
     var response = await http.post(
       uri,
       headers: {'content-type': 'application/json'},
@@ -22,7 +22,7 @@ class MemberRepository {
   }
 
   static Future<LoginResponse?> login(String email, String password) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/auth/login');
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/auth/login');
     var response = await http.post(
       uri,
       headers: {'content-type': 'application/json'},
@@ -34,12 +34,18 @@ class MemberRepository {
     return null;
   }
 
-  static Future<int> changePassword(String oldPassword, String newPassword) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/auth/password');
+  static Future<int> changePassword(
+    String oldPassword,
+    String newPassword,
+  ) async {
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/auth/password');
     var response = await http.put(
       uri,
       headers: await ApiHelper.headers(),
-      body: jsonEncode({'oldPassword': oldPassword, 'newPassword': newPassword}),
+      body: jsonEncode({
+        'oldPassword': oldPassword,
+        'newPassword': newPassword,
+      }),
     );
     if (response.statusCode == 200) {
       return int.parse(response.body);
@@ -52,8 +58,12 @@ class MemberRepository {
     int page,
     int pageSize,
   ) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/member').replace(
-      queryParameters: {'keyword': keyword, 'page': '$page', 'pageSize': '$pageSize'},
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/member').replace(
+      queryParameters: {
+        'keyword': keyword,
+        'page': '$page',
+        'pageSize': '$pageSize',
+      },
     );
     var response = await http.get(uri, headers: await ApiHelper.headers());
     if (response.statusCode == 200) {
@@ -62,11 +72,13 @@ class MemberRepository {
         MemberSummary.fromMap,
       );
     }
-    throw Exception('Không tải được danh sách thành viên (${response.statusCode})');
+    throw Exception(
+      'Không tải được danh sách thành viên (${response.statusCode})',
+    );
   }
 
   static Future<int> setRole(String memberId, int role) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/member/role');
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/member/role');
     var response = await http.put(
       uri,
       headers: await ApiHelper.headers(),
@@ -79,7 +91,7 @@ class MemberRepository {
   }
 
   static Future<int> deleteMember(String memberId) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/member/$memberId');
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/member/$memberId');
     var response = await http.delete(uri, headers: await ApiHelper.headers());
     if (response.statusCode == 200) {
       return int.parse(response.body);

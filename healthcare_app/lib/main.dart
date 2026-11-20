@@ -20,6 +20,11 @@ import 'package:healthcare_app/prescription_checkout_page.dart';
 import 'package:healthcare_app/reminder_page.dart';
 import 'package:healthcare_app/reminder_form_page.dart';
 import 'package:healthcare_app/reminder_from_prescription_page.dart';
+import 'package:healthcare_app/exercise_page.dart';
+import 'package:healthcare_app/workout_page.dart';
+import 'package:healthcare_app/workout_form_page.dart';
+import 'package:healthcare_app/workout_weekly_page.dart';
+import 'package:healthcare_app/workout_log.dart';
 
 import 'package:healthcare_app/health_metric_type_page.dart';
 import 'package:healthcare_app/health_metric_type_form_page.dart';
@@ -87,6 +92,13 @@ class MainApp extends StatelessWidget {
         "/reminder-form": (context) => ReminderFormPage(title: 'nhắc nhở'),
         "/reminder-from-prescription": (context) =>
             ReminderFromPrescriptionPage(title: 'Tạo nhắc uống thuốc'),
+        "/exercises": (context) =>
+            const ExercisePage(title: 'Danh mục bài tập'),
+        "/workouts": (context) => const WorkoutPage(),
+        "/workout-form": (context) => WorkoutFormPage(
+          item: ModalRoute.of(context)?.settings.arguments as WorkoutLog?,
+        ),
+        "/workout-weekly": (context) => const WorkoutWeeklyPage(),
       },
     );
   }

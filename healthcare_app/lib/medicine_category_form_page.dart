@@ -1,4 +1,6 @@
-import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:healthcare_app/image_helper.dart';
 import 'package:healthcare_app/medicine_category.dart';
@@ -15,7 +17,8 @@ class _MedicineCategoryFormPageState extends State<MedicineCategoryFormPage> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   MedicineCategory? _item;
-  String? _filePath;
+  PlatformFile? _imageFile;
+  Uint8List? _imageBytes;
   String? _error;
   bool _loaded = false;
 
@@ -34,8 +37,8 @@ class _MedicineCategoryFormPageState extends State<MedicineCategoryFormPage> {
   @override
   Widget build(BuildContext context) {
     Widget? preview;
-    if (_filePath != null) {
-      preview = Image.file(File(_filePath!), height: 120);
+    if (_imageBytes != null) {
+      preview = Image.memory(_imageBytes!, height: 120);
     } else if (_item?.icon != null) {
       preview = Image.network(
         ImageHelper.url('medicinecategories', _item!.icon!),
@@ -79,9 +82,14 @@ class _MedicineCategoryFormPageState extends State<MedicineCategoryFormPage> {
   }
 
   void _pickImage() async {
-    String? path = await ImageHelper.pick();
-    if (path != null) {
-      setState(() => _filePath = path);
+    PlatformFile? file = await ImageHelper.pick();
+    if (file != null) {
+      final bytes = await file.readAsBytes();
+      if (!mounted) return;
+      setState(() {
+        _imageFile = file;
+        _imageBytes = bytes;
+      });
     }
   }
 
@@ -93,8 +101,8 @@ class _MedicineCategoryFormPageState extends State<MedicineCategoryFormPage> {
     }
     String description = _descriptionController.text.trim();
     int ret = _item == null
-        ? await MedicineCategoryRepository.add(name, description, _filePath)
-        : await MedicineCategoryRepository.edit(_item!.id, name, description, _filePath);
+        ? await MedicineCategoryRepository.add(name, description, _imageFile)
+        : await MedicineCategoryRepository.edit(_item!.id, name, description, _imageFile);
     if (!mounted) return;
     if (ret > 0) {
       ScaffoldMessenger.of(context).showSnackBar(

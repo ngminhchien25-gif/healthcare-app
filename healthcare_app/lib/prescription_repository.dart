@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthcare_app/api_helper.dart';
 import 'package:healthcare_app/prescription_info.dart';
@@ -7,7 +6,7 @@ import 'package:healthcare_app/prescription_line.dart';
 import 'package:healthcare_app/paged_result.dart';
 import 'package:healthcare_app/prescription.dart';
 class PrescriptionRepository {
-  static String get _base => '${dotenv.env['API_URL']}/api/prescription';
+  static String get _base => '${ApiHelper.baseUrl}/api/prescription';
 
   static String _apiDate(DateTime d) {
     return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';

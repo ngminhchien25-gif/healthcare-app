@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthcare_app/api_helper.dart';
 import 'package:healthcare_app/medicine.dart';
@@ -21,7 +21,7 @@ class MedicineRepository {
       'pageSize': '$pageSize',
     };
     if (categoryId != null) query['categoryId'] = categoryId.toString();
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine')
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/medicine')
         .replace(queryParameters: query);
     http.Response response;
     try {
@@ -47,7 +47,7 @@ class MedicineRepository {
   }
 
   static Future<Medicine> getMedicine(int id) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine/$id');
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/medicine/$id');
     http.Response response;
     try {
       response = await http
@@ -70,20 +70,20 @@ class MedicineRepository {
     throw Exception('Không tìm thấy thuốc $id (${response.statusCode})');
   }
 
-  static Future<int> add(Medicine obj, String? filePath) {
-    return _send('POST', obj, filePath);
+  static Future<int> add(Medicine obj, PlatformFile? image) {
+    return _send('POST', obj, image);
   }
 
-  static Future<int> edit(Medicine obj, String? filePath) {
-    return _send('PUT', obj, filePath);
+  static Future<int> edit(Medicine obj, PlatformFile? image) {
+    return _send('PUT', obj, image);
   }
 
   static Future<int> _send(
     String method,
     Medicine obj,
-    String? filePath,
+    PlatformFile? image,
   ) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine');
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/medicine');
     var request = http.MultipartRequest(method, uri);
     request.headers.addAll(await ApiHelper.authHeaders());
     request.fields['medicineId'] = obj.id.toString();
@@ -92,8 +92,11 @@ class MedicineRepository {
     request.fields['unit'] = obj.unit;
     request.fields['description'] = obj.description ?? '';
     request.fields['precaution'] = obj.precaution ?? '';
-    if (filePath != null) {
-      request.files.add(await http.MultipartFile.fromPath('file', filePath));
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      request.files.add(
+        http.MultipartFile.fromBytes('file', bytes, filename: image.name),
+      );
     }
     var response = await http.Response.fromStream(await request.send());
     if (response.statusCode == 200) {
@@ -103,7 +106,7 @@ class MedicineRepository {
   }
 
   static Future<int> delete(int id) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine/$id');
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/medicine/$id');
     var response = await http.delete(uri, headers: await ApiHelper.headers());
     if (response.statusCode == 200) {
       return int.parse(response.body);
@@ -116,7 +119,7 @@ class MedicineRepository {
     int page,
     int pageSize,
   ) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicine/related/$id')
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/medicine/related/$id')
         .replace(queryParameters: {'page': '$page', 'pageSize': '$pageSize'});
     var response = await http.get(uri, headers: await ApiHelper.headers());
     if (response.statusCode == 200) {

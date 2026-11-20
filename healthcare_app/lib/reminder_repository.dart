@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthcare_app/api_helper.dart';
 import 'package:healthcare_app/local_database.dart';
@@ -9,7 +8,7 @@ import 'package:healthcare_app/paged_result.dart';
 import 'package:healthcare_app/reminder.dart';
 
 class ReminderRepository {
-  static String get _base => '${dotenv.env['API_URL']}/api/reminder';
+  static String get _base => '${ApiHelper.baseUrl}/api/reminder';
 
   static Future<PagedResult<Reminder>> getReminders(
     int? type,

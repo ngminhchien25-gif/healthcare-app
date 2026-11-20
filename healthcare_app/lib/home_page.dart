@@ -133,6 +133,13 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 8),
 
             // ===== Module B (Bảo): luyện tập =====
+            _menuCard(Icons.fitness_center, 'Bài tập', '/exercises'),
+            _menuCard(Icons.directions_run, 'Nhật ký luyện tập', '/workouts'),
+            _menuCard(
+              Icons.bar_chart,
+              'Thống kê luyện tập tuần',
+              '/workout-weekly',
+            ),
 
             // ===== Module C: thuốc và nhắc nhở =====
             Text(
@@ -228,6 +235,11 @@ class _HomePageState extends State<HomePage> {
                 ),
 
                 // ===== Menu Admin của Module B =====
+                ElevatedButton.icon(
+                  onPressed: () => _openAdmin('/exercises'),
+                  icon: const Icon(Icons.fitness_center),
+                  label: const Text('Quản lý bài tập'),
+                ),
 
                 // ===== Menu Admin của Module C =====
                 ElevatedButton.icon(
