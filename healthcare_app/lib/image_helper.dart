@@ -1,13 +1,12 @@
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:healthcare_app/api_helper.dart';
 
 class ImageHelper {
-  static Future<String?> pick() async {
-    PlatformFile? file = await FilePicker.pickFile(type: FileType.image);
-    return file?.path;
+  static Future<PlatformFile?> pick() async {
+    return FilePicker.pickFile(type: FileType.image);
   }
 
   static String url(String folder, String fileName) {
-    return '${dotenv.env['API_URL']}/$folder/$fileName';
+    return '${ApiHelper.baseUrl}/$folder/$fileName';
   }
 }

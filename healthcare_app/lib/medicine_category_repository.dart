@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:healthcare_app/api_helper.dart';
 import 'package:healthcare_app/medicine_category.dart';
@@ -9,7 +9,7 @@ import 'package:healthcare_app/local_database.dart';
 
 class MedicineCategoryRepository {
   static Future<List<MedicineCategory>> getMedicineCategories() async {
-    String url = '${dotenv.env['API_URL']}/api/medicinecategory';
+    String url = '${ApiHelper.baseUrl}/api/medicinecategory';
     http.Response response;
     try {
       response = await http
@@ -33,17 +33,21 @@ class MedicineCategoryRepository {
     throw Exception('Không tải được nhóm thuốc (${response.statusCode})');
   }
 
-  static Future<int> add(String name, String description, String? filePath) {
-    return _send('POST', 0, name, description, filePath);
+  static Future<int> add(
+    String name,
+    String description,
+    PlatformFile? image,
+  ) {
+    return _send('POST', 0, name, description, image);
   }
 
   static Future<int> edit(
     int id,
     String name,
     String description,
-    String? filePath,
+    PlatformFile? image,
   ) {
-    return _send('PUT', id, name, description, filePath);
+    return _send('PUT', id, name, description, image);
   }
 
   static Future<int> _send(
@@ -51,16 +55,19 @@ class MedicineCategoryRepository {
     int id,
     String name,
     String description,
-    String? filePath,
+    PlatformFile? image,
   ) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicinecategory');
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/medicinecategory');
     var request = http.MultipartRequest(method, uri);
     request.headers.addAll(await ApiHelper.authHeaders());
     request.fields['medicineCategoryId'] = id.toString();
     request.fields['medicineCategoryName'] = name;
     request.fields['description'] = description;
-    if (filePath != null) {
-      request.files.add(await http.MultipartFile.fromPath('file', filePath));
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      request.files.add(
+        http.MultipartFile.fromBytes('file', bytes, filename: image.name),
+      );
     }
     var response = await http.Response.fromStream(await request.send());
     if (response.statusCode == 200) {
@@ -70,7 +77,7 @@ class MedicineCategoryRepository {
   }
 
   static Future<int> delete(int id) async {
-    Uri uri = Uri.parse('${dotenv.env['API_URL']}/api/medicinecategory/$id');
+    Uri uri = Uri.parse('${ApiHelper.baseUrl}/api/medicinecategory/$id');
     var response = await http.delete(uri, headers: await ApiHelper.headers());
     if (response.statusCode == 200) {
       return int.parse(response.body);

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -23,12 +21,18 @@ class LocalDatabase {
       'medicineId INTEGER, '
       'prescriptionId INTEGER)';
   static Future<Database> _open() async {
+    if (kIsWeb) {
+      throw UnsupportedError('SQLite cache is not available on Flutter Web');
+    }
     if (_db != null) return _db!;
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
     }
-    Directory dir = await getApplicationSupportDirectory();
+    final dir = await getApplicationSupportDirectory();
     String path = p.join(dir.path, 'healthcare.db');
     debugPrint('SQLite: $path');
     _db = await openDatabase(
@@ -66,6 +70,7 @@ class LocalDatabase {
 
   // ===== Nhóm thuốc =====
   static Future<void> saveCategories(List<MedicineCategory> list) async {
+    if (kIsWeb) return;
     Database db = await _open();
     await db.transaction((txn) async {
       await txn.delete('MedicineCategory');
@@ -80,6 +85,7 @@ class LocalDatabase {
   }
 
   static Future<List<MedicineCategory>> getCategories() async {
+    if (kIsWeb) return [];
     Database db = await _open();
     var rows = await db.query(
       'MedicineCategory',
@@ -90,6 +96,7 @@ class LocalDatabase {
 
   // ===== Thuốc =====
   static Future<void> saveMedicines(List<Medicine> list) async {
+    if (kIsWeb) return;
     Database db = await _open();
     await db.transaction((txn) async {
       for (var m in list) {
@@ -103,6 +110,7 @@ class LocalDatabase {
   }
 
   static Future<Medicine?> getMedicine(int id) async {
+    if (kIsWeb) return null;
     Database db = await _open();
     var rows = await db.query(
       'Medicine',
@@ -119,6 +127,15 @@ class LocalDatabase {
     int page,
     int pageSize,
   ) async {
+    if (kIsWeb) {
+      return PagedResult<Medicine>(
+        items: [],
+        total: 0,
+        page: page,
+        pageSize: pageSize,
+        totalPages: 0,
+      );
+    }
     Database db = await _open();
     List<String> conditions = [];
     List<Object?> args = [];
@@ -154,6 +171,7 @@ class LocalDatabase {
 
   // ===== Nhắc nhở (chỉ lưu các nhắc sắp tới của người đang đăng nhập) =====
   static Future<void> saveReminders(List<Reminder> list) async {
+    if (kIsWeb) return;
     Database db = await _open();
     await db.transaction((txn) async {
       await txn.delete('Reminder');
@@ -168,6 +186,7 @@ class LocalDatabase {
   }
 
   static Future<List<Reminder>> getReminders() async {
+    if (kIsWeb) return [];
     Database db = await _open();
     var rows = await db.query(
       'Reminder',
@@ -178,6 +197,7 @@ class LocalDatabase {
   }
 
   static Future<void> clearReminders() async {
+    if (kIsWeb) return;
     Database db = await _open();
     await db.delete('Reminder');
   }

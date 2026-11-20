@@ -1,4 +1,6 @@
-import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:healthcare_app/image_helper.dart';
 import 'package:healthcare_app/medicine.dart';
@@ -21,7 +23,8 @@ class _MedicineFormPageState extends State<MedicineFormPage> {
   List<MedicineCategory> _categories = [];
   Medicine? _item;
   int? _categoryId;
-  String? _filePath;
+  PlatformFile? _imageFile;
+  Uint8List? _imageBytes;
   String? _error;
   bool _loaded = false;
 
@@ -54,8 +57,8 @@ class _MedicineFormPageState extends State<MedicineFormPage> {
   @override
   Widget build(BuildContext context) {
     Widget? preview;
-    if (_filePath != null) {
-      preview = Image.file(File(_filePath!), height: 160);
+    if (_imageBytes != null) {
+      preview = Image.memory(_imageBytes!, height: 160);
     } else if (_item?.imageUrl != null) {
       preview = Image.network(
         ImageHelper.url('medicines', _item!.imageUrl!),
@@ -118,9 +121,14 @@ class _MedicineFormPageState extends State<MedicineFormPage> {
   }
 
   void _pickImage() async {
-    String? path = await ImageHelper.pick();
-    if (path != null) {
-      setState(() => _filePath = path);
+    PlatformFile? file = await ImageHelper.pick();
+    if (file != null) {
+      final bytes = await file.readAsBytes();
+      if (!mounted) return;
+      setState(() {
+        _imageFile = file;
+        _imageBytes = bytes;
+      });
     }
   }
 
@@ -135,7 +143,7 @@ class _MedicineFormPageState extends State<MedicineFormPage> {
       setState(() => _error = 'Vui lòng nhập tên thuốc và đơn vị');
       return;
     }
-    if (_item == null && _filePath == null) {
+    if (_item == null && _imageFile == null) {
       setState(() => _error = 'Vui lòng chọn ảnh thuốc');
       return;
     }
@@ -150,8 +158,8 @@ class _MedicineFormPageState extends State<MedicineFormPage> {
       createdAt: _item?.createdAt ?? DateTime.now(),
     );
     int ret = _item == null
-        ? await MedicineRepository.add(obj, _filePath)
-        : await MedicineRepository.edit(obj, _filePath);
+        ? await MedicineRepository.add(obj, _imageFile)
+        : await MedicineRepository.edit(obj, _imageFile);
     if (!mounted) return;
     if (ret > 0) {
       ScaffoldMessenger.of(context).showSnackBar(
