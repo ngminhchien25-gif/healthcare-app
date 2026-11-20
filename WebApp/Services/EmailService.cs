@@ -1,7 +1,6 @@
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
-
 namespace WebApp.Services;
 public class EmailService
 {

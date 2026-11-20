@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:healthcare_app/member.dart';
 import 'package:healthcare_app/member_repository.dart';
+
 class RegisterPage extends StatefulWidget {
   final String title;
   const RegisterPage({super.key, required this.title});
+
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
+
 class _RegisterPageState extends State<RegisterPage> {
   String? _error;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _givenNameController = TextEditingController();
   final _surnameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,13 +48,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 label: const Text('Register'),
                 icon: const Icon(Icons.save),
               ),
-              if (_error != null ) Text(_error!),
+              if (_error != null) Text(_error!),
             ],
           ),
         ),
       ),
     );
   }
+
   Future<void> _register() async {
     var obj = Member(
       id: null,
@@ -66,6 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Register Success')),
       );
+      Navigator.pop(context);
     } else {
       setState(() {
         _error = 'Register Failed';

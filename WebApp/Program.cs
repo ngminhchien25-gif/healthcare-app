@@ -23,9 +23,12 @@ builder.Services.AddAuthentication(p =>
 });
 builder.Services.AddScoped<SiteProvider>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddCors(p => p.AddDefaultPolicy(policy =>
+    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddMvc();
 var app = builder.Build();
 app.UseStaticFiles();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapDefaultControllerRoute();

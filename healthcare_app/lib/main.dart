@@ -21,6 +21,12 @@ import 'package:healthcare_app/reminder_page.dart';
 import 'package:healthcare_app/reminder_form_page.dart';
 import 'package:healthcare_app/reminder_from_prescription_page.dart';
 
+import 'package:healthcare_app/health_metric_type_page.dart';
+import 'package:healthcare_app/health_metric_type_form_page.dart';
+import 'package:healthcare_app/health_profile_page.dart';
+import 'package:healthcare_app/health_record_page.dart';
+import 'package:healthcare_app/health_record_form_page.dart';
+import 'package:healthcare_app/health_chart_page.dart';
 void main() async {
   await dotenv.load(fileName: '.env');
   runApp(const MainApp());
@@ -41,6 +47,19 @@ class MainApp extends StatelessWidget {
         "/change-password": (context) =>
             ChangePasswordPage(title: 'Đổi mật khẩu'),
         "/members": (context) => MemberPage(title: 'Quản lý thành viên'),
+                // ===== Module A (Danh): chỉ số cơ thể =====
+        "/health-metric-types": (context) =>
+            HealthMetricTypePage(title: 'Quản lý loại chỉ số'),
+        "/health-metric-type-form": (context) =>
+            HealthMetricTypeFormPage(title: 'loại chỉ số'),
+        "/health-profile": (context) =>
+            HealthProfilePage(title: 'Hồ sơ sức khỏe'),
+        "/health-records": (context) =>
+            HealthRecordPage(title: 'Chỉ số sức khỏe'),
+        "/health-record-form": (context) =>
+            HealthRecordFormPage(title: 'chỉ số sức khỏe'),
+        "/health-chart": (context) =>
+            HealthChartPage(title: 'Biểu đồ chỉ số'),
         // ===== Module C: thuốc và nhắc nhở =====
         "/medicine-categories": (context) =>
             MedicineCategoryPage(title: 'Quản lý nhóm thuốc'),

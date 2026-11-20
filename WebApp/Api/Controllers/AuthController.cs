@@ -24,17 +24,14 @@ public class AuthController : BaseController
             Console.WriteLine(ex.Message);
         }
     }
-
     [HttpPost("register")]
-    public async Task<int> Add(Member obj)
+    public int Add(Member obj)
     {
         ModelState.Remove(nameof(obj.MemberId));
         if (ModelState.IsValid)
         {
-            obj.Role = Role.Member; 
-            int ret = Provider.Member.Add(obj);
-            if (ret > 0) await SendCodeAsync(obj, 0);
-            return ret;
+            obj.Role = Role.Member;
+            return Provider.Member.Add(obj);
         }
         return -2;
     }
@@ -55,7 +52,6 @@ public class AuthController : BaseController
         if (obj.NewPassword.Length < 6) return -2;
         return Provider.Member.ChangePassword(MemberId, obj);
     }
-
     [HttpPost("verify-email/send")]
     public async Task<int> SendVerifyEmail(EmailModel obj)
     {
@@ -95,7 +91,7 @@ public class AuthController : BaseController
         if (ret == 1)
         {
             Provider.EmailCode.ResetPassword(member.MemberId!, obj.NewPassword);
-            Provider.EmailCode.ConfirmEmail(member.MemberId!); 
+            Provider.EmailCode.ConfirmEmail(member.MemberId!);
         }
         return ret;
     }

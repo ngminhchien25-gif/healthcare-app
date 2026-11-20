@@ -110,7 +110,27 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 12),
           if (_email != null) ...[
-            // ===== Module A (Danh): chỉ số cơ thể =====
+                        // ===== Module A (Danh): chỉ số cơ thể =====
+            Text(
+              'Chỉ số sức khỏe',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            _menuCard(
+              Icons.monitor_weight,
+              'Theo dõi chỉ số & BMI',
+              '/health-records',
+            ),
+            _menuCard(
+              Icons.person_outline,
+              'Hồ sơ sức khỏe cá nhân',
+              '/health-profile',
+            ),
+            _menuCard(
+              Icons.show_chart,
+              'Biểu đồ & Lịch sử chỉ số',
+              '/health-chart',
+            ),
+            const SizedBox(height: 8),
 
             // ===== Module B (Bảo): luyện tập =====
 
@@ -200,7 +220,12 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.people),
                   label: const Text('Quản lý thành viên'),
                 ),
-                // ===== Menu Admin của Module A =====
+                                // ===== Menu Admin của Module A =====
+                ElevatedButton.icon(
+                  onPressed: () => _openAdmin('/health-metric-types'),
+                  icon: const Icon(Icons.analytics),
+                  label: const Text('Quản lý loại chỉ số'),
+                ),
 
                 // ===== Menu Admin của Module B =====
 

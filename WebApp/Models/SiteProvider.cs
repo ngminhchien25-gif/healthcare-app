@@ -5,6 +5,13 @@ public class SiteProvider : BaseProvider
     }
     MemberRepository? member;
     public MemberRepository Member => member ??= new MemberRepository(Connection);
+        // ===== Module A (Danh): chỉ số cơ thể =====
+    HealthMetricTypeRepository? healthMetricType;
+    public HealthMetricTypeRepository HealthMetricType => healthMetricType ??= new HealthMetricTypeRepository(Connection);
+    HealthProfileRepository? healthProfile;
+    public HealthProfileRepository HealthProfile => healthProfile ??= new HealthProfileRepository(Connection);
+    HealthRecordRepository? healthRecord;
+    public HealthRecordRepository HealthRecord => healthRecord ??= new HealthRecordRepository(Connection);
     // ===== Module C: thuốc và nhắc nhở =====
     MedicineCategoryRepository? medicineCategory;
     public MedicineCategoryRepository MedicineCategory => medicineCategory ??= new MedicineCategoryRepository(Connection);
