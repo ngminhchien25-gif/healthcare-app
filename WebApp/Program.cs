@@ -34,18 +34,11 @@ builder.Services.AddAuthentication(p =>
 });
 builder.Services.AddScoped<SiteProvider>();
 builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<SiteProvider>();
-builder.Services.AddScoped<EmailService>();
 builder.Services.AddControllers();
 var app = builder.Build();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("LocalFlutter");
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-
-app.Run();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
